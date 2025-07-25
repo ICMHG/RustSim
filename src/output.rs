@@ -1,0 +1,506 @@
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
+use anyhow::Result;
+use serde::{Deserialize, Serialize};
+
+use crate::simulator::SimulationResult;
+use crate::cli::OutputFormat;
+
+/// Output processor for simulation results
+pub struct OutputProcessor {
+    config: OutputConfig,
+}
+
+#[derive(Debug, Clone)]
+pub struct OutputConfig {
+    pub precision: usize,
+    pub scientific_notation: bool,
+    pub include_metadata: bool,
+    pub compress_output: bool,
+}
+
+impl Default for OutputConfig {
+    fn default() -> Self {
+        OutputConfig {
+            precision: 6,
+            scientific_notation: false,
+            include_metadata: true,
+            compress_output: false,
+        }
+    }
+}
+
+/// Statistical analysis of simulation results
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResultStatistics {
+    pub node_voltage_stats: HashMap<String, SignalStats>,
+    pub current_stats: HashMap<String, SignalStats>,
+    pub analysis_metadata: AnalysisMetadata,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SignalStats {
+    pub min: f64,
+    pub max: f64,
+    pub mean: f64,
+    pub std_dev: f64,
+    pub rms: f64,
+    pub peak_to_peak: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AnalysisMetadata {
+    pub analysis_type: String,
+    pub total_points: usize,
+    pub time_span: f64,
+    pub convergence_rate: f64,
+    pub simulation_time: f64,
+}
+
+impl OutputProcessor {
+    /// Create a new output processor with default configuration
+    pub fn new() -> Self {
+        OutputProcessor {
+            config: OutputConfig::default(),
+        }
+    }
+
+    /// Create a new output processor with custom configuration
+    pub fn with_config(config: OutputConfig) -> Self {
+        OutputProcessor { config }
+    }
+
+    /// Export simulation results to the specified format
+    pub fn export_results(&self, results: &SimulationResult, filename: &str, format: OutputFormat) -> Result<()> {
+        match format {
+            OutputFormat::Csv => self.export_csv(results, filename),
+            OutputFormat::Json => self.export_json(results, filename),
+        }
+    }
+
+    /// Export results to CSV format with advanced options
+    pub fn export_csv(&self, results: &SimulationResult, filename: &str) -> Result<()> {
+        let file = File::create(filename)?;
+        let mut writer = csv::Writer::from_writer(file);
+
+        // Write metadata as comments if enabled
+        if self.config.include_metadata {
+            self.write_csv_metadata(&mut writer, results)?;
+        }
+
+        // Create header
+        let mut header = vec!["time".to_string()];
+        
+        // Sort node names for consistent output
+        let mut node_names: Vec<&String> = results.node_voltages.keys().collect();
+        node_names.sort();
+        for node_name in &node_names {
+            header.push(format!("V({})", node_name));
+        }
+
+        // Sort current names
+        let mut current_names: Vec<&String> = results.currents.keys().collect();
+        current_names.sort();
+        for current_name in &current_names {
+            header.push(format!("I({})", current_name));
+        }
+
+        writer.write_record(&header)?;
+
+        // Write data points
+        for (i, &time) in results.time_points.iter().enumerate() {
+            let mut record = vec![self.format_number(time)];
+            
+            // Add voltage data
+            for node_name in &node_names {
+                let voltage = results.node_voltages[*node_name].get(i).unwrap_or(&0.0);
+                record.push(self.format_number(*voltage));
+            }
+            
+            // Add current data
+            for current_name in &current_names {
+                let current = results.currents[*current_name].get(i).unwrap_or(&0.0);
+                record.push(self.format_number(*current));
+            }
+            
+            writer.write_record(&record)?;
+        }
+
+        writer.flush()?;
+        Ok(())
+    }
+
+    /// Export results to JSON format with metadata
+    pub fn export_json(&self, results: &SimulationResult, filename: &str) -> Result<()> {
+        let mut output_data = serde_json::Map::new();
+        
+        // Add simulation results
+        output_data.insert("results".to_string(), serde_json::to_value(results)?);
+        
+        // Add statistics if enabled
+        if self.config.include_metadata {
+            let stats = self.calculate_statistics(results)?;
+            output_data.insert("statistics".to_string(), serde_json::to_value(stats)?);
+        }
+        
+        let file = File::create(filename)?;
+        serde_json::to_writer_pretty(file, &output_data)?;
+        
+        Ok(())
+    }
+
+    /// Export to MATLAB/Octave format
+    pub fn export_matlab(&self, results: &SimulationResult, filename: &str) -> Result<()> {
+        let mut file = File::create(filename)?;
+        
+        writeln!(file, "% SPICE Simulation Results")?;
+        writeln!(file, "% Generated by psim")?;
+        writeln!(file, "% Analysis: {:?}", results.analysis_type)?;
+        writeln!(file)?;
+
+        // Time vector
+        write!(file, "time = [")?;
+        for (i, &t) in results.time_points.iter().enumerate() {
+            if i > 0 { write!(file, ", ")?; }
+            write!(file, "{}", self.format_number(t))?;
+        }
+        writeln!(file, "];")?;
+
+        // Voltage vectors
+        for (node_name, voltages) in &results.node_voltages {
+            write!(file, "V_{} = [", node_name.replace('-', "_"))?;
+            for (i, &v) in voltages.iter().enumerate() {
+                if i > 0 { write!(file, ", ")?; }
+                write!(file, "{}", self.format_number(v))?;
+            }
+            writeln!(file, "];")?;
+        }
+
+        // Current vectors
+        for (current_name, currents) in &results.currents {
+            write!(file, "I_{} = [", current_name.replace('-', "_"))?;
+            for (i, &c) in currents.iter().enumerate() {
+                if i > 0 { write!(file, ", ")?; }
+                write!(file, "{}", self.format_number(c))?;
+            }
+            writeln!(file, "];")?;
+        }
+
+        Ok(())
+    }
+
+    /// Export to Python/NumPy format
+    pub fn export_python(&self, results: &SimulationResult, filename: &str) -> Result<()> {
+        let mut file = File::create(filename)?;
+        
+        writeln!(file, "# SPICE Simulation Results")?;
+        writeln!(file, "# Generated by psim")?;
+        writeln!(file, "import numpy as np")?;
+        writeln!(file, "import matplotlib.pyplot as plt")?;
+        writeln!(file)?;
+
+        // Time array
+        write!(file, "time = np.array([")?;
+        for (i, &t) in results.time_points.iter().enumerate() {
+            if i > 0 { write!(file, ", ")?; }
+            write!(file, "{}", self.format_number(t))?;
+        }
+        writeln!(file, "])")?;
+
+        // Voltage arrays
+        for (node_name, voltages) in &results.node_voltages {
+            write!(file, "V_{} = np.array([", node_name.replace('-', "_"))?;
+            for (i, &v) in voltages.iter().enumerate() {
+                if i > 0 { write!(file, ", ")?; }
+                write!(file, "{}", self.format_number(v))?;
+            }
+            writeln!(file, "])")?;
+        }
+
+        // Current arrays
+        for (current_name, currents) in &results.currents {
+            write!(file, "I_{} = np.array([", current_name.replace('-', "_"))?;
+            for (i, &c) in currents.iter().enumerate() {
+                if i > 0 { write!(file, ", ")?; }
+                write!(file, "{}", self.format_number(c))?;
+            }
+            writeln!(file, "])")?;
+        }
+
+        // Generate basic plotting code
+        writeln!(file)?;
+        writeln!(file, "# Basic plotting example")?;
+        writeln!(file, "plt.figure(figsize=(12, 8))")?;
+        
+        let mut subplot_idx = 1;
+        if !results.node_voltages.is_empty() {
+            writeln!(file, "plt.subplot(2, 1, {})", subplot_idx)?;
+            for (i, node_name) in results.node_voltages.keys().enumerate() {
+                let var_name = node_name.replace('-', "_");
+                writeln!(file, "plt.plot(time, V_{}, label='V({})')", var_name, node_name)?;
+            }
+            writeln!(file, "plt.xlabel('Time (s)')")?;
+            writeln!(file, "plt.ylabel('Voltage (V)')")?;
+            writeln!(file, "plt.legend()")?;
+            writeln!(file, "plt.grid(True)")?;
+            subplot_idx += 1;
+        }
+
+        if !results.currents.is_empty() {
+            writeln!(file, "plt.subplot(2, 1, {})", subplot_idx)?;
+            for current_name in results.currents.keys() {
+                let var_name = current_name.replace('-', "_");
+                writeln!(file, "plt.plot(time, I_{}, label='I({})')", var_name, current_name)?;
+            }
+            writeln!(file, "plt.xlabel('Time (s)')")?;
+            writeln!(file, "plt.ylabel('Current (A)')")?;
+            writeln!(file, "plt.legend()")?;
+            writeln!(file, "plt.grid(True)")?;
+        }
+
+        writeln!(file, "plt.tight_layout()")?;
+        writeln!(file, "plt.show()")?;
+
+        Ok(())
+    }
+
+    /// Calculate statistical information about the simulation results
+    pub fn calculate_statistics(&self, results: &SimulationResult) -> Result<ResultStatistics> {
+        let mut node_voltage_stats = HashMap::new();
+        let mut current_stats = HashMap::new();
+
+        // Calculate voltage statistics
+        for (node_name, voltages) in &results.node_voltages {
+            if !voltages.is_empty() {
+                let stats = self.calculate_signal_stats(voltages);
+                node_voltage_stats.insert(node_name.clone(), stats);
+            }
+        }
+
+        // Calculate current statistics
+        for (current_name, currents) in &results.currents {
+            if !currents.is_empty() {
+                let stats = self.calculate_signal_stats(currents);
+                current_stats.insert(current_name.clone(), stats);
+            }
+        }
+
+        // Calculate analysis metadata
+        let time_span = if results.time_points.len() > 1 {
+            results.time_points.last().unwrap() - results.time_points.first().unwrap()
+        } else {
+            0.0
+        };
+
+        let convergence_rate = if !results.convergence_info.is_empty() {
+            let successful_iterations = results.convergence_info.iter()
+                .filter(|info| info.residual_norm < 1e-9)
+                .count();
+            successful_iterations as f64 / results.convergence_info.len() as f64
+        } else {
+            1.0
+        };
+
+        let analysis_metadata = AnalysisMetadata {
+            analysis_type: format!("{:?}", results.analysis_type),
+            total_points: results.time_points.len(),
+            time_span,
+            convergence_rate,
+            simulation_time: results.total_time,
+        };
+
+        Ok(ResultStatistics {
+            node_voltage_stats,
+            current_stats,
+            analysis_metadata,
+        })
+    }
+
+    /// Calculate statistics for a single signal
+    fn calculate_signal_stats(&self, values: &[f64]) -> SignalStats {
+        if values.is_empty() {
+            return SignalStats {
+                min: 0.0,
+                max: 0.0,
+                mean: 0.0,
+                std_dev: 0.0,
+                rms: 0.0,
+                peak_to_peak: 0.0,
+            };
+        }
+
+        let min = values.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+        let max = values.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
+        let mean = values.iter().sum::<f64>() / values.len() as f64;
+        
+        let variance = values.iter()
+            .map(|&x| (x - mean).powi(2))
+            .sum::<f64>() / values.len() as f64;
+        let std_dev = variance.sqrt();
+        
+        let rms = (values.iter()
+            .map(|&x| x.powi(2))
+            .sum::<f64>() / values.len() as f64).sqrt();
+        
+        let peak_to_peak = max - min;
+
+        SignalStats {
+            min,
+            max,
+            mean,
+            std_dev,
+            rms,
+            peak_to_peak,
+        }
+    }
+
+    /// Format a number according to configuration
+    fn format_number(&self, value: f64) -> String {
+        if self.config.scientific_notation {
+            format!("{:.precision$e}", value, precision = self.config.precision)
+        } else {
+            format!("{:.precision$}", value, precision = self.config.precision)
+        }
+    }
+
+    /// Write CSV metadata as comments
+    fn write_csv_metadata(&self, writer: &mut csv::Writer<File>, results: &SimulationResult) -> Result<()> {
+        // CSV doesn't support comments directly, but we can add them as the first rows
+        // and then skip them during reading if needed
+        writer.write_record(&[format!("# SPICE Simulation Results")])?;
+        writer.write_record(&[format!("# Analysis: {:?}", results.analysis_type)])?;
+        writer.write_record(&[format!("# Total time: {:.6}s", results.total_time)])?;
+        writer.write_record(&[format!("# Success: {}", results.success)])?;
+        writer.write_record(&[format!("# Data points: {}", results.time_points.len())])?;
+        writer.write_record(&["#"])?; // Empty comment line
+        Ok(())
+    }
+
+    /// Print a detailed summary of the simulation results
+    pub fn print_detailed_summary(&self, results: &SimulationResult) -> Result<()> {
+        println!("\n{}", "=".repeat(60));
+        println!("           DETAILED SIMULATION SUMMARY");
+        println!("{}", "=".repeat(60));
+        
+        // Basic information
+        println!("Analysis Type: {:?}", results.analysis_type);
+        println!("Simulation Time: {:.3}ms", results.total_time * 1000.0);
+        println!("Success: {}", results.success);
+        println!("Data Points: {}", results.time_points.len());
+        
+        // Time span information
+        if results.time_points.len() > 1 {
+            let time_span = results.time_points.last().unwrap() - results.time_points.first().unwrap();
+            println!("Time Span: {:.6}s", time_span);
+        }
+
+        // Calculate and display statistics
+        let stats = self.calculate_statistics(results)?;
+        
+        if !stats.node_voltage_stats.is_empty() {
+            println!("\nNode Voltage Statistics:");
+            println!("{:-<60}", "");
+            println!("{:<10} {:>8} {:>8} {:>8} {:>8} {:>8}", "Node", "Min(V)", "Max(V)", "Mean(V)", "RMS(V)", "Std(V)");
+            println!("{:-<60}", "");
+            
+            for (node_name, stats) in &stats.node_voltage_stats {
+                println!("{:<10} {:>8.3} {:>8.3} {:>8.3} {:>8.3} {:>8.3}",
+                    node_name, stats.min, stats.max, stats.mean, stats.rms, stats.std_dev);
+            }
+        }
+
+        if !stats.current_stats.is_empty() {
+            println!("\nCurrent Statistics:");
+            println!("{:-<60}", "");
+            println!("{:<10} {:>8} {:>8} {:>8} {:>8} {:>8}", "Source", "Min(A)", "Max(A)", "Mean(A)", "RMS(A)", "Std(A)");
+            println!("{:-<60}", "");
+            
+            for (current_name, stats) in &stats.current_stats {
+                println!("{:<10} {:>8.3} {:>8.3} {:>8.3} {:>8.3} {:>8.3}",
+                    current_name, stats.min, stats.max, stats.mean, stats.rms, stats.std_dev);
+            }
+        }
+
+        // Convergence information
+        if !results.convergence_info.is_empty() {
+            println!("\nConvergence Statistics:");
+            println!("{:-<60}", "");
+            let avg_residual = results.convergence_info.iter()
+                .map(|info| info.residual_norm)
+                .sum::<f64>() / results.convergence_info.len() as f64;
+            let avg_solve_time = results.convergence_info.iter()
+                .map(|info| info.solve_time)
+                .sum::<f64>() / results.convergence_info.len() as f64;
+            
+            println!("Total Iterations: {}", results.convergence_info.len());
+            println!("Average Residual: {:.2e}", avg_residual);
+            println!("Average Solve Time: {:.3}ms", avg_solve_time * 1000.0);
+            println!("Convergence Rate: {:.1}%", stats.analysis_metadata.convergence_rate * 100.0);
+        }
+        
+        println!("{}", "=".repeat(60));
+        
+        Ok(())
+    }
+}
+
+impl Default for OutputProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::simulator::{SimulationResult, AnalysisType};
+    use std::collections::HashMap;
+
+    fn create_test_results() -> SimulationResult {
+        let mut node_voltages = HashMap::new();
+        node_voltages.insert("1".to_string(), vec![0.0, 1.0, 2.0, 3.0]);
+        
+        let mut currents = HashMap::new();
+        currents.insert("V1".to_string(), vec![0.001, 0.002, 0.003, 0.004]);
+
+        SimulationResult {
+            analysis_type: AnalysisType::Transient { tstep: 1e-3, tstop: 3e-3 },
+            time_points: vec![0.0, 1e-3, 2e-3, 3e-3],
+            node_voltages,
+            currents,
+            convergence_info: Vec::new(),
+            total_time: 0.001,
+            success: true,
+        }
+    }
+
+    #[test]
+    fn test_statistics_calculation() {
+        let processor = OutputProcessor::new();
+        let results = create_test_results();
+        
+        let stats = processor.calculate_statistics(&results).unwrap();
+        
+        assert!(stats.node_voltage_stats.contains_key("1"));
+        assert!(stats.current_stats.contains_key("V1"));
+        
+        let voltage_stats = &stats.node_voltage_stats["1"];
+        assert_eq!(voltage_stats.min, 0.0);
+        assert_eq!(voltage_stats.max, 3.0);
+        assert_eq!(voltage_stats.mean, 1.5);
+    }
+
+    #[test]
+    fn test_signal_stats() {
+        let processor = OutputProcessor::new();
+        let values = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+        
+        let stats = processor.calculate_signal_stats(&values);
+        
+        assert_eq!(stats.min, 1.0);
+        assert_eq!(stats.max, 5.0);
+        assert_eq!(stats.mean, 3.0);
+        assert_eq!(stats.peak_to_peak, 4.0);
+    }
+} 
