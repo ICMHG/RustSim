@@ -1,6 +1,6 @@
 use clap::{Arg, ArgMatches, Command};
 use colored::*;
-use log::{error, info, warn};
+use log::{error, info};
 use std::path::Path;
 
 mod circuit;
@@ -26,7 +26,7 @@ fn main() {
 }
 
 fn create_cli() -> Command {
-    Command::new("psim")
+    Command::new("RustSim")
         .version("0.1.0")
         .about("A high-performance SPICE circuit simulator written in Rust")
         .author("SPICE-Rust Team")
@@ -78,7 +78,7 @@ fn create_cli() -> Command {
 fn run_application(matches: &ArgMatches) -> anyhow::Result<()> {
     let args = CliArgs::from_matches(matches)?;
     
-    info!("{}", "Starting PSIM - Rust SPICE Simulator".green().bold());
+    info!("{}", "Starting RustSim - Rust SPICE Simulator".green().bold());
     info!("Input file: {}", args.input_file.bright_blue());
     
     // Validate input file exists

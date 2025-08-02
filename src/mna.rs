@@ -184,7 +184,7 @@ impl MnaSystem {
             idx
         } else {
             // Add as additional unknown
-            let idx = self.size;
+            let _idx = self.size;
             // Note: This would require expanding the system dynamically
             // For simplicity, we'll treat inductors as very small resistors for DC
             let small_resistance = 1e-12;

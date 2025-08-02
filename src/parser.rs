@@ -5,15 +5,35 @@ use nom::{
     combinator::{map, opt, recognize},
     multi::{many0, separated_list1},
     number::complete::double,
-    sequence::{pair, preceded, terminated, tuple},
+    sequence::{pair, preceded, terminated},
     IResult,
 };
 use regex::Regex;
+use lazy_static::lazy_static;
 use std::collections::HashMap;
 use std::fs;
 use anyhow::{anyhow, Result};
 
 use crate::circuit::{Component, ComponentType, Node};
+
+// 正则表达式模式
+lazy_static! {
+    static ref COMPONENT_PATTERN: Regex = Regex::new(
+        r"^([RVCLID])(\w+)\s+(\w+)\s+(\w+)\s+(.+)$"
+    ).unwrap();
+    
+    static ref VOLTAGE_SOURCE_PATTERN: Regex = Regex::new(
+        r"^([RVCLID])(\w+)\s+(\w+)\s+(\w+)\s+(DC|AC|PULSE)\s+(.+)$"
+    ).unwrap();
+    
+    static ref VALUE_PATTERN: Regex = Regex::new(
+        r"^([0-9]+\.?[0-9]*)\s*([a-zA-Z]*)$"
+    ).unwrap();
+    
+    static ref ANALYSIS_PATTERN: Regex = Regex::new(
+        r"^\.(op|tran|dc|ac)\s+(.+)$"
+    ).unwrap();
+}
 
 #[derive(Debug, Clone)]
 pub struct SpiceNetlist {
@@ -50,6 +70,7 @@ pub enum Analysis {
     },
 }
 
+#[allow(dead_code)]
 pub struct SpiceParser {
     line_regex: Regex,
 }
@@ -76,10 +97,205 @@ impl SpiceParser {
 
     pub fn parse_netlist(&self, content: &str) -> Result<SpiceNetlist> {
         let lines = self.preprocess_lines(content);
-        let (_, netlist) = parse_spice_netlist(&lines.join("\n"))
-            .map_err(|e| anyhow!("Parse error: {}", e))?;
+        let mut components = Vec::new();
+        let mut analyses = Vec::new();
+        let mut title = String::new();
         
-        Ok(netlist)
+        for (_line_num, line) in lines.iter().enumerate() {
+            let line = line.trim();
+            
+            // 跳过空行和注释
+            if line.is_empty() || line.starts_with('*') || line.starts_with(';') {
+                continue;
+            }
+            
+            // 解析标题（第一行非注释行）
+            if title.is_empty() && !line.starts_with('.') {
+                title = line.to_string();
+                continue;
+            }
+            
+            // 解析分析指令
+            if line.starts_with('.') {
+                if let Some(analysis) = self.parse_analysis_line(line)? {
+                    analyses.push(analysis);
+                }
+                continue;
+            }
+            
+            // 解析组件
+            if let Some(component) = self.parse_component_line(line)? {
+                components.push(component);
+            }
+        }
+        
+        Ok(SpiceNetlist {
+            title,
+            components,
+            nodes: Vec::new(), // 节点将在电路构建时创建
+            subcircuits: Vec::new(),
+            parameters: HashMap::new(),
+            analyses,
+        })
+    }
+    
+    fn parse_component_line(&self, line: &str) -> Result<Option<Component>> {
+        // 尝试匹配电压源模式（支持DC/AC/PULSE）
+        if let Some(captures) = VOLTAGE_SOURCE_PATTERN.captures(line) {
+            let component_type = captures.get(1).unwrap().as_str();
+            let name = captures.get(2).unwrap().as_str().to_string();
+            let node1 = captures.get(3).unwrap().as_str().to_string();
+            let node2 = captures.get(4).unwrap().as_str().to_string();
+            let source_type = captures.get(5).unwrap().as_str();
+            let value_str = captures.get(6).unwrap().as_str();
+            
+            if component_type == "V" {
+                // 对于PULSE等复杂语法，我们只取第一个数值作为初始值
+                let value = if source_type == "PULSE" {
+                    // 解析PULSE(0V 5V 0s 1ns 1ns 500ns 1us)格式
+                    if let Some(pulse_captures) = Regex::new(r"PULSE\(([^)]+)\)").unwrap().captures(value_str) {
+                        let pulse_params = pulse_captures.get(1).unwrap().as_str();
+                        let params: Vec<&str> = pulse_params.split_whitespace().collect();
+                        if params.len() >= 2 {
+                            // 使用第二个参数（高电平）作为电压值
+                            self.parse_value_with_unit(params[1])?
+                        } else {
+                            self.parse_value_with_unit(params[0])?
+                        }
+                    } else {
+                        // 如果不是PULSE格式，尝试直接解析
+                        self.parse_value_with_unit(value_str)?
+                    }
+                } else {
+                    self.parse_value_with_unit(value_str)?
+                };
+                
+                return Ok(Some(Component {
+                    name,
+                    component_type: ComponentType::VoltageSource,
+                    nodes: vec![node1, node2],
+                    value,
+                    model: None,
+                }));
+            }
+        }
+        
+        // 尝试匹配普通组件模式
+        if let Some(captures) = COMPONENT_PATTERN.captures(line) {
+            let component_type = captures.get(1).unwrap().as_str();
+            let name = captures.get(2).unwrap().as_str().to_string();
+            let node1 = captures.get(3).unwrap().as_str().to_string();
+            let node2 = captures.get(4).unwrap().as_str().to_string();
+            let value_str = captures.get(5).unwrap().as_str();
+            
+            let value = self.parse_value_with_unit(value_str)?;
+            
+            let comp_type = match component_type {
+                "R" => ComponentType::Resistor,
+                "C" => ComponentType::Capacitor,
+                "L" => ComponentType::Inductor,
+                "V" => ComponentType::VoltageSource,
+                "I" => ComponentType::CurrentSource,
+                "D" => ComponentType::Diode,
+                _ => return Err(anyhow!("Unknown component type: {}", component_type)),
+            };
+            
+            return Ok(Some(Component {
+                name,
+                component_type: comp_type,
+                nodes: vec![node1, node2],
+                value,
+                model: None,
+            }));
+        }
+        
+        Ok(None)
+    }
+    
+    fn parse_analysis_line(&self, line: &str) -> Result<Option<Analysis>> {
+        if let Some(captures) = ANALYSIS_PATTERN.captures(line) {
+            let analysis_type = captures.get(1).unwrap().as_str();
+            let params = captures.get(2).unwrap().as_str();
+            
+            match analysis_type {
+                "op" => Ok(Some(Analysis::Operating)),
+                "tran" => {
+                    let parts: Vec<&str> = params.split_whitespace().collect();
+                    if parts.len() >= 2 {
+                        let tstep = self.parse_time_with_unit(parts[0])?;
+                        let tstop = self.parse_time_with_unit(parts[1])?;
+                        Ok(Some(Analysis::Transient { tstep, tstop, tstart: None }))
+                    } else {
+                        Err(anyhow!("Invalid transient analysis parameters"))
+                    }
+                }
+                "dc" => {
+                    let parts: Vec<&str> = params.split_whitespace().collect();
+                    if parts.len() >= 4 {
+                        let source = parts[0].to_string();
+                        let start = parts[1].parse::<f64>()?;
+                        let stop = parts[2].parse::<f64>()?;
+                        let step = parts[3].parse::<f64>()?;
+                        Ok(Some(Analysis::DcSweep { source, start, stop, step }))
+                    } else {
+                        Err(anyhow!("Invalid DC sweep parameters"))
+                    }
+                }
+                _ => Ok(None),
+            }
+        } else {
+            Ok(None)
+        }
+    }
+    
+    fn parse_value_with_unit(&self, value_str: &str) -> Result<f64> {
+        if let Some(captures) = VALUE_PATTERN.captures(value_str) {
+            let value = captures.get(1).unwrap().as_str().parse::<f64>()?;
+            let unit = captures.get(2).unwrap().as_str().to_lowercase();
+            
+            let multiplier = match unit.as_str() {
+                "f" | "femto" => 1e-15,
+                "p" | "pico" => 1e-12,
+                "n" | "nano" => 1e-9,
+                "u" | "micro" => 1e-6,
+                "m" | "milli" => 1e-3,
+                "k" | "kilo" => 1e3,
+                "meg" | "mega" => 1e6,
+                "g" | "giga" => 1e9,
+                "t" | "tera" => 1e12,
+                "v" => 1.0, // 电压单位
+                "" => 1.0,   // 无单位
+                _ => return Err(anyhow!("Unknown unit: {}", unit)),
+            };
+            
+            Ok(value * multiplier)
+        } else {
+            // 尝试直接解析数值
+            value_str.parse::<f64>().map_err(|e| anyhow!("Invalid value: {}", e))
+        }
+    }
+    
+    fn parse_time_with_unit(&self, time_str: &str) -> Result<f64> {
+        if let Some(captures) = VALUE_PATTERN.captures(time_str) {
+            let value = captures.get(1).unwrap().as_str().parse::<f64>()?;
+            let unit = captures.get(2).unwrap().as_str().to_lowercase();
+            
+            let multiplier = match unit.as_str() {
+                "fs" => 1e-15,
+                "ps" => 1e-12,
+                "ns" => 1e-9,
+                "us" => 1e-6,
+                "ms" => 1e-3,
+                "s" => 1.0,
+                "" => 1.0,   // 无单位，假设秒
+                _ => return Err(anyhow!("Unknown time unit: {}", unit)),
+            };
+            
+            Ok(value * multiplier)
+        } else {
+            // 尝试直接解析数值
+            time_str.parse::<f64>().map_err(|e| anyhow!("Invalid time value: {}", e))
+        }
     }
 
     /// Preprocess SPICE netlist lines - handle line continuations, comments, etc.

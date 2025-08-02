@@ -209,7 +209,7 @@ impl Simulator {
             .find(|comp| comp.name == source_name)
             .ok_or_else(|| anyhow!("Source component '{}' not found", source_name))?;
 
-        let original_value = source_component.value;
+        let _original_value = source_component.value;
         let num_points = ((stop - start) / step).abs() as usize + 1;
         
         let mut sweep_points = Vec::new();

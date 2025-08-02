@@ -69,7 +69,7 @@ impl ComponentType {
         matches!(self, ComponentType::VoltageSource | ComponentType::CurrentSource)
     }
 
-    /// Returns true if this component requires current tracking
+    #[allow(dead_code)]
     pub fn tracks_current(&self) -> bool {
         matches!(self, ComponentType::VoltageSource | ComponentType::Inductor)
     }

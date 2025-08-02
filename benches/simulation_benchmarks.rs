@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, BenchmarkId};
-use psim::*;
+use RustSim::*;
 
 fn bench_simple_circuit(c: &mut Criterion) {
     let mut group = c.benchmark_group("simple_circuit");
@@ -41,7 +41,7 @@ fn bench_matrix_sizes(c: &mut Criterion) {
     for size in [10, 50, 100, 200].iter() {
         group.bench_with_input(BenchmarkId::new("lu_solver", size), size, |b, &size| {
             use nalgebra::{DMatrix, DVector};
-            use psim::solver::LinearSolver;
+            use RustSim::solver::LinearSolver;
             
             // Create a random positive definite matrix
             let mut matrix = DMatrix::<f64>::identity(size, size);

@@ -1,16 +1,16 @@
 [package]
-name = "psim"
+name = "RustSim"
 version = "0.1.0"
 edition = "2021"
 authors = ["Your Name <your.email@example.com>"]
 description = "A high-performance SPICE circuit simulator written in Rust"
-repository = "https://github.com/yourusername/psim"
+repository = "https://github.com/yourusername/RustSim"
 license = "MIT OR Apache-2.0"
 keywords = ["spice", "circuit", "simulation", "electronics", "eda"]
 categories = ["science", "simulation"]
 
 [[bin]]
-name = "psim"
+name = "rustSim"
 path = "src/main.rs"
 
 [dependencies]
@@ -22,6 +22,7 @@ ndarray = "0.15"
 # Parser related
 nom = "7.1"
 regex = "1.10"
+lazy_static = "1.5"
 
 # CLI interface
 clap = { version = "4.4", features = ["derive"] }

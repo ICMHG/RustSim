@@ -1,90 +1,96 @@
-# PSIM - High-Performance SPICE Circuit Simulator in Rust
+# RustSim - 高性能SPICE电路仿真器
 
-## 📝 Overview
+[![Rust](https://img.shields.io/badge/Rust-2021-orange.svg)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/License-MIT%2FApache--2.0-green.svg)](LICENSE)
+[![SPICE](https://img.shields.io/badge/SPICE-Compatible-red.svg)](https://en.wikipedia.org/wiki/SPICE)
+[![Linear Algebra](https://img.shields.io/badge/Linear-Algebra-9cf.svg)](https://nalgebra.org/)
+[![Documentation](https://img.shields.io/badge/Documentation-Online-blue.svg)](https://icmhg.github.io/RustSim/)
 
-PSIM is a modern, high-performance SPICE circuit simulator written in Rust. It provides accurate and efficient simulation of electronic circuits with focus on type safety, memory efficiency, and computational performance.
+## 📝 概述
 
-## ✨ Features
+RustSim是一个用Rust编写的现代、高性能SPICE电路仿真器。它提供准确高效的电子电路仿真，专注于类型安全、内存效率和计算性能。
 
-- **Comprehensive SPICE Support**: Parses standard SPICE netlist format (.sp files)
-- **Multiple Analysis Types**:
-  - Operating Point (DC) Analysis
-  - DC Sweep Analysis  
-  - Transient Analysis
-- **Component Support**:
-  - Resistors (R)
-  - Capacitors (C)
-  - Inductors (L)
-  - Voltage Sources (V)
-  - Current Sources (I)
-  - Diodes (D)
-- **Advanced Solver Engine**:
-  - Multiple linear system solvers (LU, QR, BiCGSTAB, CG)
-  - Automatic solver selection based on matrix properties
-  - Sparse matrix optimization
-- **Multiple Output Formats**:
-  - CSV for data analysis
-  - JSON for structured data
-  - MATLAB/Octave scripts
-  - Python/NumPy scripts with plotting
-- **Modern Rust Implementation**:
-  - Memory safety and thread safety
-  - Zero-cost abstractions
-  - Comprehensive error handling
+## ✨ 特性
 
-## 🚀 Quick Start
+- **全面的SPICE支持**：解析标准SPICE网表格式（.sp文件）
+- **多种分析类型**：
+  - 工作点（DC）分析
+  - DC扫描分析  
+  - 瞬态分析
+- **组件支持**：
+  - 电阻（R）
+  - 电容（C）
+  - 电感（L）
+  - 电压源（V）
+  - 电流源（I）
+  - 二极管（D）
+- **高级求解引擎**：
+  - 多种线性系统求解器（LU、QR、BiCGSTAB、CG）
+  - 基于矩阵特性的自动求解器选择
+  - 稀疏矩阵优化
+- **多种输出格式**：
+  - CSV用于数据分析
+  - JSON用于结构化数据
+  - MATLAB/Octave脚本
+  - Python/NumPy脚本（带绘图功能）
+- **现代Rust实现**：
+  - 内存安全和线程安全
+  - 零成本抽象
+  - 全面的错误处理
 
-### Installation
+## 🚀 快速开始
 
-Make sure you have Rust installed, then clone and build the project:
+### 安装
+
+确保已安装Rust，然后克隆并构建项目：
 
 ```bash
-git clone https://github.com/yourusername/psim.git
-cd psim
+git clone https://github.com/ICMHG/RustSim.git
+cd RustSim
 cargo build --release
 ```
 
-### Basic Usage
+### 基本用法
 
 ```bash
-# Run operating point analysis
-./target/release/psim examples/simple_circuit.sp
+# 运行工作点分析
+./target/release/rustSim examples/simple_circuit.sp
 
-# Run transient analysis
-./target/release/psim examples/rc_circuit.sp --tran 1ns 1us --output results.csv
+# 运行瞬态分析
+./target/release/rustSim examples/rc_circuit.sp --tran 1ns 1us --output results.csv
 
-# Run DC sweep analysis  
-./target/release/psim examples/voltage_divider.sp --dc V1 0V 5V 0.1V --format json
+# 运行DC扫描分析  
+./target/release/rustSim examples/voltage_divider.sp --dc V1 0V 5V 0.1V --format json
 
-# Display help
-./target/release/psim --help
+# 显示帮助
+./target/release/rustSim --help
 ```
 
-## 📋 Command Line Interface
+## 📋 命令行界面
 
 ```
-psim [OPTIONS] <INPUT_FILE>
+rustSim [选项] <输入文件>
 
-Arguments:
-  <INPUT_FILE>  Input SPICE netlist file (.sp)
+参数：
+  <输入文件>  输入SPICE网表文件（.sp）
 
-Options:
-  -o, --output <FILE>        Output file for simulation results
-      --tran <TSTEP> <TSTOP> Transient analysis: time step and stop time
-      --dc <SOURCE> <START> <STOP> <STEP>  DC sweep analysis
-  -f, --format <FORMAT>      Output format [default: csv] [possible values: csv, json]
-  -v, --verbose              Increase verbosity level
-  -h, --help                 Print help
-  -V, --version              Print version
+选项：
+  -o, --output <文件>        仿真结果输出文件
+      --tran <时间步> <停止时间>  瞬态分析：时间步长和停止时间
+      --dc <源> <开始> <停止> <步长>  DC扫描分析
+  -f, --format <格式>        输出格式 [默认: csv] [可选值: csv, json]
+  -v, --verbose              增加详细级别
+  -h, --help                 打印帮助
+  -V, --version              打印版本
 ```
 
-## 📖 SPICE Netlist Format
+## 📖 SPICE网表格式
 
-PSIM supports standard SPICE netlist syntax:
+RustSim支持标准SPICE网表语法：
 
 ```spice
-Simple RC Circuit
-* This is a comment
+简单RC电路
+* 这是注释
 V1 1 0 DC 5V
 R1 1 2 1k
 C1 2 0 1u
@@ -92,190 +98,115 @@ C1 2 0 1u
 .end
 ```
 
-### Supported Components
+### 支持的组件
 
-| Component | Syntax | Example |
-|-----------|--------|---------|
-| Resistor | `R<name> <node1> <node2> <value>` | `R1 1 2 1k` |
-| Capacitor | `C<name> <node1> <node2> <value>` | `C1 2 0 10u` |
-| Inductor | `L<name> <node1> <node2> <value>` | `L1 1 2 1m` |
-| Voltage Source | `V<name> <+node> <-node> <value>` | `V1 1 0 DC 5V` |
-| Current Source | `I<name> <+node> <-node> <value>` | `I1 1 0 DC 1m` |
+| 组件 | 语法 | 示例 |
+|------|------|------|
+| 电阻 | `R<名称> <节点1> <节点2> <值>` | `R1 1 2 1k` |
+| 电容 | `C<名称> <节点1> <节点2> <值>` | `C1 2 0 10u` |
+| 电感 | `L<名称> <节点1> <节点2> <值>` | `L1 2 3 1m` |
+| 电压源 | `V<名称> <正节点> <负节点> DC <值>` | `V1 1 0 DC 5V` |
+| 电流源 | `I<名称> <正节点> <负节点> DC <值>` | `I1 1 0 DC 1mA` |
 
-### Supported Units
+### 支持的单位
 
-- **Resistance**: Ω, k (kΩ), meg (MΩ), m (mΩ), u (μΩ)
-- **Capacitance**: F, m (mF), u (μF), n (nF), p (pF)
-- **Inductance**: H, m (mH), u (μH), n (nH)
-- **Time**: s, ms, us, ns, ps, fs
-- **Voltage/Current**: V, mV, uV / A, mA, uA, nA
+- **电阻**：Ω, kΩ, MΩ, mΩ, uΩ
+- **电容**：F, mF, uF, nF, pF
+- **电感**：H, mH, uH, nH, pH
+- **电压**：V, mV, uV, kV
+- **电流**：A, mA, uA, nA, pA
+- **时间**：s, ms, us, ns, ps, fs
 
-## 🔧 Examples
+## 🔧 技术架构
 
-### Example 1: Simple Voltage Divider
+### 核心组件
 
-```spice
-Voltage Divider Circuit
-V1 1 0 DC 5V
-R1 1 2 1k
-R2 2 0 2k  
-.op
-.end
-```
+1. **解析器**：基于正则表达式的SPICE网表解析器
+2. **电路模型**：节点和组件的抽象表示
+3. **MNA系统**：修正节点分析矩阵构建
+4. **求解器**：多种线性系统求解算法
+5. **仿真引擎**：协调分析流程
+6. **输出处理器**：结果格式化和导出
 
-### Example 2: RC Low-Pass Filter
+### 求解器算法
 
-```spice
-RC Low-Pass Filter
-V1 1 0 DC 0V PULSE(0V 5V 0s 1ns 1ns 500ns 1us)
-R1 1 2 1k
-C1 2 0 1n
-.tran 1ns 2us
-.end
-```
+- **LU分解**：适用于大多数线性系统
+- **QR分解**：数值稳定性更好
+- **BiCGSTAB**：适用于大型稀疏系统
+- **共轭梯度**：适用于对称正定系统
 
-### Example 3: RLC Circuit
+## 📊 性能特性
 
-```spice
-RLC Series Circuit
-V1 1 0 DC 0V PULSE(0V 10V 0s 1ns 1ns 100ns 1us)
-R1 1 2 100
-L1 2 3 1u
-C1 3 0 1n
-.tran 1ns 5us
-.end
-```
+- **内存效率**：稀疏矩阵存储
+- **计算速度**：优化的线性代数运算
+- **数值稳定性**：条件数检查和自动求解器选择
+- **并行处理**：支持多线程计算
 
-## 📊 Output Analysis
+## 🧪 测试和验证
 
-PSIM provides detailed simulation results and statistics:
+项目包含全面的测试套件：
 
 ```bash
-# Generate detailed analysis
-./target/release/psim circuit.sp --tran 1ns 1us -v
-
-# Export to Python for plotting
-./target/release/psim circuit.sp --tran 1ns 1us --output results.py --format python
-python results.py  # Generates plots
-```
-
-## 🏗️ Architecture
-
-PSIM is built with a modular architecture:
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CLI Module    │───▶│  Parser Module  │───▶│ Circuit Module  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                        │
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Output Module   │◄───│ Simulator Module│◄───│   MNA Module    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                        │
-                       ┌─────────────────┐    ┌─────────────────┐
-                       │ Solver Module   │◄───┘
-                       └─────────────────┘
-```
-
-### Key Modules
-
-- **Parser**: SPICE netlist parsing with `nom` combinator library
-- **Circuit**: Circuit representation and component modeling  
-- **MNA**: Modified Nodal Analysis system assembly
-- **Solver**: Linear system solvers with sparse matrix support
-- **Simulator**: High-level simulation control and orchestration
-- **Output**: Multi-format result export and statistical analysis
-
-## 🧪 Testing
-
-Run the test suite:
-
-```bash
-# Run all tests
+# 运行所有测试
 cargo test
 
-# Run tests with output
-cargo test -- --nocapture
-
-# Run specific module tests
-cargo test circuit::tests
-cargo test parser::tests
-
-# Run benchmarks
+# 运行基准测试
 cargo bench
+
+# 运行特定测试
+cargo test test_voltage_divider
 ```
 
-## 📈 Performance
+## 📈 基准测试结果
 
-PSIM is designed for high performance:
+在标准硬件上，RustSim的性能表现：
 
-- **Sparse Matrix Operations**: Efficient storage and computation for large circuits
-- **Automatic Solver Selection**: Chooses optimal solver based on matrix properties
-- **Memory Efficiency**: Rust's zero-cost abstractions and ownership model
-- **Parallel Processing**: Ready for future parallel solver implementations
+- **简单电路**：< 1ms仿真时间
+- **中等电路**：1-10ms仿真时间
+- **复杂电路**：10-100ms仿真时间
+- **内存使用**：高效稀疏存储
 
-### Benchmarks
+## 🤝 贡献
 
-| Circuit Type | Nodes | Components | Time (ms) | Memory (MB) |
-|--------------|-------|------------|-----------|-------------|
-| Simple RC | 3 | 3 | 0.1 | 1.2 |
-| Op-Amp Circuit | 15 | 25 | 2.3 | 4.8 |
-| Large Digital Circuit | 1000 | 2500 | 125 | 78 |
+欢迎贡献！请查看[贡献指南](CONTRIBUTING.md)了解详情。
 
-## 🤝 Contributing
-
-Contributions are welcome! Please read our contributing guidelines:
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
-
-### Development Setup
+### 开发环境设置
 
 ```bash
-git clone https://github.com/yourusername/psim.git
-cd psim
+# 克隆仓库
+git clone https://github.com/ICMHG/RustSim
+cd rustsim
+
+# 安装依赖
 cargo build
+
+# 运行测试
 cargo test
+
+# 检查代码质量
+cargo clippy
+cargo fmt
 ```
 
-## 📄 License
+## 📄 许可证
 
-This project is licensed under the MIT OR Apache-2.0 license.
+本项目采用MIT许可证 - 查看[LICENSE](LICENSE)文件了解详情。
 
-## 🔗 Related Projects
+## 🙏 致谢
 
-- [NgSpice](http://ngspice.sourceforge.net/) - Open source SPICE simulator
-- [LTSpice](https://www.analog.com/en/design-center/design-tools-and-calculators/ltspice-simulator.html) - Analog Devices SPICE simulator
-- [XYCE](https://xyce.sandia.gov/) - Sandia National Labs SPICE simulator
+感谢以下开源项目的支持：
 
-## 📚 Documentation
+- [nalgebra](https://nalgebra.org/) - 线性代数库
+- [sprs](https://github.com/vbarrielle/sprs) - 稀疏矩阵库
+- [nom](https://github.com/Geal/nom) - 解析器组合子库
+- [clap](https://github.com/clap-rs/clap) - 命令行参数解析
 
-- [SPICE User Guide](doc/spice_guide.md) - Comprehensive SPICE syntax reference
-- [API Documentation](https://docs.rs/psim) - Rust API documentation
-- [Algorithm Guide](doc/algorithms.md) - Technical details on simulation algorithms
+## 📞 联系方式
 
-## 💡 Roadmap
-
-- [ ] AC Analysis support
-- [ ] Nonlinear device models (MOSFET, BJT)
-- [ ] Monte Carlo analysis
-- [ ] Parameter sweeps
-- [ ] Parallel solver implementations
-- [ ] GUI interface
-- [ ] Python API bindings
-- [ ] Subcircuit support
-- [ ] Advanced optimization algorithms
-
-## 📞 Support
-
-- 📧 Email: support@psim.dev
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/psim/discussions)
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/psim/issues)
-- 📖 Documentation: [Online Docs](https://psim.dev/docs)
+- 项目主页：https://github.com/ICMHG/RustSim
+- 问题报告：https://github.com/ICMHG/RustSim/issues
+- 讨论区：https://github.com/ICMHG/RustSim/discussions
 
 ---
 
-Built with ❤️ in Rust for the electronics simulation community. 
+**RustSim** - 用Rust构建的高性能电路仿真器 ⚡ 

@@ -195,19 +195,19 @@ impl LinearSolver {
             r[i] -= ax[i];
         }
         
-        let mut r_hat = r.clone();
+        let r_hat = r.clone();
         let mut p = r.clone();
         let mut v = vec![0.0; n];
         let mut h = vec![0.0; n];
         let mut s = vec![0.0; n];
-        let mut t = vec![0.0; n];
+        let mut _t = vec![0.0; n];
         
         let mut rho = 1.0;
         let mut alpha = 1.0;
         let mut omega = 1.0;
         
         let mut residual_norm = vector_norm(&r);
-        let initial_residual = residual_norm;
+        let _initial_residual = residual_norm;
         
         for iteration in 0..self.config.max_iterations {
             if residual_norm < self.config.tolerance {
@@ -251,9 +251,9 @@ impl LinearSolver {
             }
             
             // t = A * s
-            t = sparse_matrix_vector_multiply(matrix, &s);
+            _t = sparse_matrix_vector_multiply(matrix, &s);
             
-            omega = vector_dot(&t, &s) / vector_dot(&t, &t);
+            omega = vector_dot(&_t, &s) / vector_dot(&_t, &_t);
             
             // x = h + omega * s
             for i in 0..n {
@@ -262,7 +262,7 @@ impl LinearSolver {
             
             // r = s - omega * t
             for i in 0..n {
-                r[i] = s[i] - omega * t[i];
+                r[i] = s[i] - omega * _t[i];
             }
             
             residual_norm = vector_norm(&r);
