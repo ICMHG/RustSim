@@ -1,0 +1,763 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-cn" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>介绍 · RustSim 算法实现原理文档</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="RustSim Team">
+        
+        
+    
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-back-to-top-button/plugin.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+    
+        
+        
+        <link rel="stylesheet" href="gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.default.css" />
+    
+
+        
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="algorithms/01-architecture.html" />
+    
+    
+
+    <style>
+    @media only screen and (max-width: 640px) {
+        .book-header .hidden-mobile {
+            display: none;
+        }
+    }
+    </style>
+    <script>
+        window["gitbook-plugin-github-buttons"] = {"repo":"ICMHG/RustSim","types":["star","watch","fork","follow"],"size":"small"};
+    </script>
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter active" data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">算法实现原理</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="algorithms/01-architecture.html">
+            
+                <a href="algorithms/01-architecture.html">
+            
+                    
+                    总体架构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="algorithms/02-parser.html">
+            
+                <a href="algorithms/02-parser.html">
+            
+                    
+                    解析器算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="algorithms/03-circuit-modeling.html">
+            
+                <a href="algorithms/03-circuit-modeling.html">
+            
+                    
+                    电路建模
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="algorithms/04-mna.html">
+            
+                <a href="algorithms/04-mna.html">
+            
+                    
+                    MNA算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="algorithms/05-solver.html">
+            
+                <a href="algorithms/05-solver.html">
+            
+                    
+                    求解器算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="algorithms/06-simulation.html">
+            
+                <a href="algorithms/06-simulation.html">
+            
+                    
+                    仿真算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="algorithms/07-output.html">
+            
+                <a href="algorithms/07-output.html">
+            
+                    
+                    输出处理
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">快速开始</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="getting-started/installation.md">
+            
+                <span>
+            
+                    
+                    安装指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="getting-started/basic-usage.md">
+            
+                <span>
+            
+                    
+                    基本使用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="getting-started/examples.md">
+            
+                <span>
+            
+                    
+                    示例电路
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">高级功能</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="advanced/performance.md">
+            
+                <span>
+            
+                    
+                    性能优化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="advanced/extension.md">
+            
+                <span>
+            
+                    
+                    扩展开发
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="advanced/troubleshooting.md">
+            
+                <span>
+            
+                    
+                    故障排除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">参考文档</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="reference/api.md">
+            
+                <span>
+            
+                    
+                    API参考
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="reference/spice-syntax.md">
+            
+                <span>
+            
+                    
+                    SPICE语法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="reference/configuration.md">
+            
+                <span>
+            
+                    
+                    配置选项
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">贡献指南</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="contributing/development.md">
+            
+                <span>
+            
+                    
+                    开发环境
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="contributing/coding-standards.md">
+            
+                <span>
+            
+                    
+                    代码规范
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="contributing/testing.md">
+            
+                <span>
+            
+                    
+                    测试指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="contributing/commits.md">
+            
+                <span>
+            
+                    
+                    提交规范
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">附录</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="appendix/mathematics.md">
+            
+                <span>
+            
+                    
+                    数学公式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.2" data-path="appendix/complexity.md">
+            
+                <span>
+            
+                    
+                    算法复杂度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.3" data-path="appendix/faq.md">
+            
+                <span>
+            
+                    
+                    常见问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.4" data-path="appendix/changelog.md">
+            
+                <span>
+            
+                    
+                    更新日志
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本書使用 GitBook 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >介绍</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="rustsim-&#x7B97;&#x6CD5;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#x6587;&#x6863;">RustSim &#x7B97;&#x6CD5;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#x6587;&#x6863;</h1>
+<p>&#x6B22;&#x8FCE;&#x9605;&#x8BFB;RustSim&#x9AD8;&#x6027;&#x80FD;SPICE&#x7535;&#x8DEF;&#x4EFF;&#x771F;&#x5668;&#x7684;&#x7B97;&#x6CD5;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#x6587;&#x6863;&#xFF01;</p>
+<h2 id="&#x1F4D6;-&#x6587;&#x6863;&#x6982;&#x8FF0;">&#x1F4D6; &#x6587;&#x6863;&#x6982;&#x8FF0;</h2>
+<p>&#x672C;&#x6587;&#x6863;&#x8BE6;&#x7EC6;&#x4ECB;&#x7ECD;&#x4E86;RustSim&#x9879;&#x76EE;&#x7684;&#x6838;&#x5FC3;&#x7B97;&#x6CD5;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#xFF0C;&#x5305;&#x62EC;&#xFF1A;</p>
+<ul>
+<li><strong>&#x603B;&#x4F53;&#x67B6;&#x6784;</strong>&#xFF1A;&#x7CFB;&#x7EDF;&#x8BBE;&#x8BA1;&#x548C;&#x6A21;&#x5757;&#x5173;&#x7CFB;</li>
+<li><strong>&#x89E3;&#x6790;&#x5668;&#x7B97;&#x6CD5;</strong>&#xFF1A;SPICE&#x7F51;&#x8868;&#x89E3;&#x6790;&#x539F;&#x7406;</li>
+<li><strong>&#x7535;&#x8DEF;&#x5EFA;&#x6A21;</strong>&#xFF1A;&#x7535;&#x8DEF;&#x62BD;&#x8C61;&#x548C;&#x5143;&#x4EF6;&#x5EFA;&#x6A21;</li>
+<li><strong>MNA&#x7B97;&#x6CD5;</strong>&#xFF1A;&#x6539;&#x8FDB;&#x8282;&#x70B9;&#x5206;&#x6790;&#x5B9E;&#x73B0;</li>
+<li><strong>&#x6C42;&#x89E3;&#x5668;&#x7B97;&#x6CD5;</strong>&#xFF1A;&#x7EBF;&#x6027;&#x7CFB;&#x7EDF;&#x6C42;&#x89E3;&#x65B9;&#x6CD5;</li>
+<li><strong>&#x4EFF;&#x771F;&#x7B97;&#x6CD5;</strong>&#xFF1A;&#x4EFF;&#x771F;&#x63A7;&#x5236;&#x548C;&#x6536;&#x655B;&#x5206;&#x6790;</li>
+<li><strong>&#x8F93;&#x51FA;&#x5904;&#x7406;</strong>&#xFF1A;&#x7ED3;&#x679C;&#x5BFC;&#x51FA;&#x548C;&#x7EDF;&#x8BA1;&#x5206;&#x6790;</li>
+</ul>
+<h2 id="&#x1F680;-&#x5FEB;&#x901F;&#x5F00;&#x59CB;">&#x1F680; &#x5FEB;&#x901F;&#x5F00;&#x59CB;</h2>
+<h3 id="&#x5728;&#x7EBF;&#x9605;&#x8BFB;">&#x5728;&#x7EBF;&#x9605;&#x8BFB;</h3>
+<p>&#x6587;&#x6863;&#x5DF2;&#x90E8;&#x7F72;&#x5230;GitHub Pages&#xFF0C;&#x60A8;&#x53EF;&#x4EE5;&#x5728;&#x7EBF;&#x9605;&#x8BFB;&#xFF1A;
+<a href="https://icmhg.github.io/RustSim/" target="_blank">https://icmhg.github.io/RustSim/</a></p>
+<h3 id="&#x672C;&#x5730;&#x6784;&#x5EFA;">&#x672C;&#x5730;&#x6784;&#x5EFA;</h3>
+<p>&#x5982;&#x679C;&#x60A8;&#x60F3;&#x5728;&#x672C;&#x5730;&#x6784;&#x5EFA;&#x548C;&#x67E5;&#x770B;&#x6587;&#x6863;&#xFF1A;</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x8FDB;&#x5165;&#x6587;&#x6863;&#x76EE;&#x5F55;</span>
+<span class="hljs-built_in">cd</span> doc
+
+<span class="hljs-comment"># &#x5B89;&#x88C5;GitBook CLI&#xFF08;&#x5982;&#x679C;&#x672A;&#x5B89;&#x88C5;&#xFF09;</span>
+npm install -g gitbook-cli
+
+<span class="hljs-comment"># &#x5B89;&#x88C5;GitBook</span>
+gitbook fetch latest
+
+<span class="hljs-comment"># &#x5B89;&#x88C5;&#x63D2;&#x4EF6;</span>
+gitbook install
+
+<span class="hljs-comment"># &#x6784;&#x5EFA;&#x6587;&#x6863;</span>
+gitbook build
+
+<span class="hljs-comment"># &#x542F;&#x52A8;&#x672C;&#x5730;&#x670D;&#x52A1;&#x5668;</span>
+gitbook serve
+</code></pre>
+<p>&#x7136;&#x540E;&#x5728;&#x6D4F;&#x89C8;&#x5668;&#x4E2D;&#x8BBF;&#x95EE; <code>http://localhost:4000</code> &#x67E5;&#x770B;&#x6587;&#x6863;&#x3002;</p>
+<h3 id="&#x90E8;&#x7F72;&#x5230;github-pages">&#x90E8;&#x7F72;&#x5230;GitHub Pages</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># &#x8FDB;&#x5165;&#x6587;&#x6863;&#x76EE;&#x5F55;</span>
+<span class="hljs-built_in">cd</span> doc
+
+<span class="hljs-comment"># &#x8FD0;&#x884C;&#x90E8;&#x7F72;&#x811A;&#x672C;</span>
+./deploy.sh deploy
+</code></pre>
+<h2 id="&#x1F4DA;-&#x6587;&#x6863;&#x7ED3;&#x6784;">&#x1F4DA; &#x6587;&#x6863;&#x7ED3;&#x6784;</h2>
+<pre><code>doc/
+&#x251C;&#x2500;&#x2500; README.md                 # &#x672C;&#x6587;&#x6863;
+&#x251C;&#x2500;&#x2500; SUMMARY.md               # GitBook&#x76EE;&#x5F55;
+&#x251C;&#x2500;&#x2500; book.json                # GitBook&#x914D;&#x7F6E;
+&#x251C;&#x2500;&#x2500; deploy.sh                # &#x90E8;&#x7F72;&#x811A;&#x672C;
+&#x2514;&#x2500;&#x2500; algorithms/              # &#x7B97;&#x6CD5;&#x6587;&#x6863;
+    &#x251C;&#x2500;&#x2500; README.md            # &#x7B97;&#x6CD5;&#x6587;&#x6863;&#x7D22;&#x5F15;
+    &#x251C;&#x2500;&#x2500; 01-architecture.md   # &#x603B;&#x4F53;&#x67B6;&#x6784;
+    &#x251C;&#x2500;&#x2500; 02-parser.md         # &#x89E3;&#x6790;&#x5668;&#x7B97;&#x6CD5;
+    &#x251C;&#x2500;&#x2500; 03-circuit-modeling.md # &#x7535;&#x8DEF;&#x5EFA;&#x6A21;
+    &#x251C;&#x2500;&#x2500; 04-mna.md            # MNA&#x7B97;&#x6CD5;
+    &#x251C;&#x2500;&#x2500; 05-solver.md         # &#x6C42;&#x89E3;&#x5668;&#x7B97;&#x6CD5;
+    &#x251C;&#x2500;&#x2500; 06-simulation.md     # &#x4EFF;&#x771F;&#x7B97;&#x6CD5;
+    &#x2514;&#x2500;&#x2500; 07-output.md         # &#x8F93;&#x51FA;&#x5904;&#x7406;
+</code></pre><h2 id="&#x1F3AF;-&#x9605;&#x8BFB;&#x5EFA;&#x8BAE;">&#x1F3AF; &#x9605;&#x8BFB;&#x5EFA;&#x8BAE;</h2>
+<h3 id="&#x521D;&#x5B66;&#x8005;">&#x521D;&#x5B66;&#x8005;</h3>
+<p>&#x5982;&#x679C;&#x60A8;&#x662F;&#x7B2C;&#x4E00;&#x6B21;&#x63A5;&#x89E6;&#x7535;&#x8DEF;&#x4EFF;&#x771F;&#x6216;RustSim&#x9879;&#x76EE;&#xFF0C;&#x5EFA;&#x8BAE;&#x6309;&#x4EE5;&#x4E0B;&#x987A;&#x5E8F;&#x9605;&#x8BFB;&#xFF1A;</p>
+<ol>
+<li><strong>&#x603B;&#x4F53;&#x67B6;&#x6784;</strong> - &#x4E86;&#x89E3;&#x7CFB;&#x7EDF;&#x6574;&#x4F53;&#x8BBE;&#x8BA1;</li>
+<li><strong>&#x89E3;&#x6790;&#x5668;&#x7B97;&#x6CD5;</strong> - &#x7406;&#x89E3;&#x8F93;&#x5165;&#x5904;&#x7406;</li>
+<li><strong>&#x7535;&#x8DEF;&#x5EFA;&#x6A21;</strong> - &#x5B66;&#x4E60;&#x6570;&#x636E;&#x7ED3;&#x6784;</li>
+<li><strong>MNA&#x7B97;&#x6CD5;</strong> - &#x638C;&#x63E1;&#x6838;&#x5FC3;&#x4EFF;&#x771F;&#x539F;&#x7406;</li>
+<li><strong>&#x6C42;&#x89E3;&#x5668;&#x7B97;&#x6CD5;</strong> - &#x4E86;&#x89E3;&#x6570;&#x503C;&#x8BA1;&#x7B97;</li>
+<li><strong>&#x4EFF;&#x771F;&#x7B97;&#x6CD5;</strong> - &#x7406;&#x89E3;&#x4EFF;&#x771F;&#x6D41;&#x7A0B;</li>
+<li><strong>&#x8F93;&#x51FA;&#x5904;&#x7406;</strong> - &#x5B66;&#x4E60;&#x7ED3;&#x679C;&#x5904;&#x7406;</li>
+</ol>
+<h3 id="&#x5F00;&#x53D1;&#x8005;">&#x5F00;&#x53D1;&#x8005;</h3>
+<p>&#x5982;&#x679C;&#x60A8;&#x662F;&#x5F00;&#x53D1;&#x8005;&#x6216;&#x7814;&#x7A76;&#x4EBA;&#x5458;&#xFF0C;&#x53EF;&#x4EE5;&#xFF1A;</p>
+<ul>
+<li>&#x76F4;&#x63A5;&#x8DF3;&#x8F6C;&#x5230;&#x611F;&#x5174;&#x8DA3;&#x7684;&#x7B97;&#x6CD5;&#x7AE0;&#x8282;</li>
+<li>&#x67E5;&#x770B;&#x4EE3;&#x7801;&#x793A;&#x4F8B;&#x548C;&#x5B9E;&#x73B0;&#x7EC6;&#x8282;</li>
+<li>&#x53C2;&#x8003;&#x6027;&#x80FD;&#x4F18;&#x5316;&#x548C;&#x6269;&#x5C55;&#x6027;&#x8BBE;&#x8BA1;&#x90E8;&#x5206;</li>
+</ul>
+<h3 id="&#x7814;&#x7A76;&#x4EBA;&#x5458;">&#x7814;&#x7A76;&#x4EBA;&#x5458;</h3>
+<p>&#x5982;&#x679C;&#x60A8;&#x662F;&#x7814;&#x7A76;&#x4EBA;&#x5458;&#x6216;&#x5B66;&#x751F;&#xFF0C;&#x53EF;&#x4EE5;&#xFF1A;</p>
+<ul>
+<li>&#x91CD;&#x70B9;&#x5173;&#x6CE8;&#x7B97;&#x6CD5;&#x539F;&#x7406;&#x548C;&#x6570;&#x5B66;&#x63A8;&#x5BFC;</li>
+<li>&#x67E5;&#x770B;&#x6027;&#x80FD;&#x5206;&#x6790;&#x548C;&#x590D;&#x6742;&#x5EA6;&#x5206;&#x6790;</li>
+<li>&#x53C2;&#x8003;&#x6269;&#x5C55;&#x6027;&#x8BBE;&#x8BA1;&#x90E8;&#x5206;&#x4E86;&#x89E3;&#x672A;&#x6765;&#x53D1;&#x5C55;&#x65B9;&#x5411;</li>
+</ul>
+<h2 id="&#x1F527;-&#x6280;&#x672F;&#x7279;&#x6027;">&#x1F527; &#x6280;&#x672F;&#x7279;&#x6027;</h2>
+<h3 id="&#x652F;&#x6301;&#x7684;&#x683C;&#x5F0F;">&#x652F;&#x6301;&#x7684;&#x683C;&#x5F0F;</h3>
+<ul>
+<li><strong>Markdown</strong> - &#x4E3B;&#x8981;&#x6587;&#x6863;&#x683C;&#x5F0F;</li>
+<li><strong>Mermaid&#x56FE;&#x8868;</strong> - &#x7CFB;&#x7EDF;&#x67B6;&#x6784;&#x56FE;</li>
+<li><strong>&#x4EE3;&#x7801;&#x9AD8;&#x4EAE;</strong> - Rust&#x4EE3;&#x7801;&#x793A;&#x4F8B;</li>
+<li><strong>&#x6570;&#x5B66;&#x516C;&#x5F0F;</strong> - LaTeX&#x6570;&#x5B66;&#x8868;&#x8FBE;&#x5F0F;</li>
+</ul>
+<h3 id="&#x529F;&#x80FD;&#x7279;&#x6027;">&#x529F;&#x80FD;&#x7279;&#x6027;</h3>
+<ul>
+<li><strong>&#x5168;&#x6587;&#x641C;&#x7D22;</strong> - &#x5FEB;&#x901F;&#x67E5;&#x627E;&#x5185;&#x5BB9;</li>
+<li><strong>&#x76EE;&#x5F55;&#x5BFC;&#x822A;</strong> - &#x6E05;&#x6670;&#x7684;&#x7AE0;&#x8282;&#x7ED3;&#x6784;</li>
+<li><strong>&#x54CD;&#x5E94;&#x5F0F;&#x8BBE;&#x8BA1;</strong> - &#x652F;&#x6301;&#x79FB;&#x52A8;&#x7AEF;</li>
+<li><strong>&#x4EE3;&#x7801;&#x590D;&#x5236;</strong> - &#x4E00;&#x952E;&#x590D;&#x5236;&#x4EE3;&#x7801;&#x793A;&#x4F8B;</li>
+</ul>
+<h2 id="&#x1F91D;-&#x8D21;&#x732E;&#x6307;&#x5357;">&#x1F91D; &#x8D21;&#x732E;&#x6307;&#x5357;</h2>
+<p>&#x5982;&#x679C;&#x60A8;&#x53D1;&#x73B0;&#x6587;&#x6863;&#x4E2D;&#x7684;&#x9519;&#x8BEF;&#x6216;&#x6709;&#x6539;&#x8FDB;&#x5EFA;&#x8BAE;&#xFF0C;&#x6B22;&#x8FCE;&#x8D21;&#x732E;&#xFF1A;</p>
+<ol>
+<li><strong>&#x63D0;&#x4EA4;Issue</strong> - &#x62A5;&#x544A;&#x95EE;&#x9898;&#x6216;&#x5EFA;&#x8BAE;</li>
+<li><strong>&#x63D0;&#x4EA4;Pull Request</strong> - &#x4FEE;&#x590D;&#x9519;&#x8BEF;&#x6216;&#x6539;&#x8FDB;&#x5185;&#x5BB9;</li>
+<li><strong>&#x53C2;&#x4E0E;&#x8BA8;&#x8BBA;</strong> - &#x5728;GitHub Discussions&#x4E2D;&#x4EA4;&#x6D41;</li>
+</ol>
+<h3 id="&#x6587;&#x6863;&#x7F16;&#x5199;&#x89C4;&#x8303;">&#x6587;&#x6863;&#x7F16;&#x5199;&#x89C4;&#x8303;</h3>
+<ul>
+<li>&#x4F7F;&#x7528;&#x6E05;&#x6670;&#x7684;&#x4E2D;&#x6587;&#x63CF;&#x8FF0;</li>
+<li>&#x5305;&#x542B;&#x8BE6;&#x7EC6;&#x7684;&#x4EE3;&#x7801;&#x793A;&#x4F8B;</li>
+<li>&#x6DFB;&#x52A0;&#x5FC5;&#x8981;&#x7684;&#x56FE;&#x8868;&#x548C;&#x516C;&#x5F0F;</li>
+<li>&#x4FDD;&#x6301;&#x6587;&#x6863;&#x7ED3;&#x6784;&#x7684;&#x4E00;&#x81F4;&#x6027;</li>
+</ul>
+<h2 id="&#x1F4DE;-&#x652F;&#x6301;">&#x1F4DE; &#x652F;&#x6301;</h2>
+<p>&#x5982;&#x679C;&#x60A8;&#x5728;&#x4F7F;&#x7528;&#x6587;&#x6863;&#x65F6;&#x9047;&#x5230;&#x95EE;&#x9898;&#xFF1A;</p>
+<ul>
+<li>&#x1F4E7; <strong>&#x90AE;&#x7BB1;</strong>&#xFF1A;&#x901A;&#x8FC7;GitHub Issues&#x8054;&#x7CFB;</li>
+<li>&#x1F4AC; <strong>&#x8BA8;&#x8BBA;</strong>&#xFF1A;<a href="https://github.com/ICMHG/RustSim/discussions" target="_blank">GitHub Discussions</a></li>
+<li>&#x1F41B; <strong>&#x95EE;&#x9898;</strong>&#xFF1A;<a href="https://github.com/ICMHG/RustSim/issues" target="_blank">GitHub Issues</a></li>
+</ul>
+<h2 id="&#x1F4C4;-&#x8BB8;&#x53EF;&#x8BC1;">&#x1F4C4; &#x8BB8;&#x53EF;&#x8BC1;</h2>
+<p>&#x672C;&#x6587;&#x6863;&#x91C7;&#x7528;&#x4E0E;RustSim&#x9879;&#x76EE;&#x76F8;&#x540C;&#x7684;&#x8BB8;&#x53EF;&#x8BC1;&#x3002;</p>
+<hr>
+<p><strong>&#x795D;&#x60A8;&#x9605;&#x8BFB;&#x6109;&#x5FEB;&#xFF01;</strong> &#x1F389;</p>
+<p>&#x5982;&#x679C;&#x60A8;&#x89C9;&#x5F97;&#x8FD9;&#x4E2A;&#x6587;&#x6863;&#x5BF9;&#x60A8;&#x6709;&#x5E2E;&#x52A9;&#xFF0C;&#x8BF7;&#x7ED9;&#x9879;&#x76EE;&#x70B9;&#x4E2A;&#x2B50;&#xFE0F;&#xFF01;</p>
+<script type="text/javascript">var targetUl = document.getElementsByClassName('page-inner')[0].getElementsByTagName('ul')[0];if(targetUl.getElementsByTagName('a').length>0){targetUl.className='toc';}</script>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                
+                <a href="algorithms/01-architecture.html" class="navigation navigation-next navigation-unique" aria-label="Next page: 总体架构">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"介绍","level":"1.1","depth":1,"next":{"title":"总体架构","level":"2.1","depth":1,"path":"algorithms/01-architecture.md","ref":"algorithms/01-architecture.md","articles":[]},"dir":"ltr"},"config":{"plugins":["search","highlight","sharing","fontsettings","theme-default","mermaid-gb3","copy-code-button","expandable-chapters","back-to-top-button","github","github-buttons","toc"],"styles":{"ebook":"styles/ebook.css","epub":"styles/epub.css","mobi":"styles/mobi.css","pdf":"styles/pdf.css","print":"styles/print.css","website":"styles/website.css"},"pluginsConfig":{"github":{"url":"https://github.com/ICMHG/RustSim"},"toc":{"addClass":true,"className":"toc"},"search":{"maxIndexSize":100000,"ignoreCase":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"family":"sans","size":2,"theme":"white"},"highlight":{},"mermaid-gb3":{"theme":"default"},"back-to-top-button":{},"github-buttons":{"repo":"ICMHG/RustSim","types":["star","watch","fork","follow"],"size":"small"},"copy-code-button":{},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"theme-default":{"showLevel":false,"styles":{"ebook":"styles/ebook.css","epub":"styles/epub.css","mobi":"styles/mobi.css","pdf":"styles/pdf.css","print":"styles/print.css","website":"styles/website.css"}},"expandable-chapters":{}},"theme":"default","author":"RustSim Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"themeRepo":"https://github.com/GitbookIO/theme-default"},"title":"RustSim 算法实现原理文档","language":"zh-cn","gitbook":"*","description":"RustSim高性能SPICE电路仿真器的详细算法实现原理文档"},"file":{"path":"README.md","mtime":"2025-08-02T11:50:14.452Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2025-08-02T12:57:36.992Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-mermaid-gb3/book/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-back-to-top-button/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-github-buttons/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    <script src="gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.min.js"></script>
+
+    </body>
+</html>
+

@@ -1,0 +1,69 @@
+{
+  "title": "RustSim 算法实现原理文档",
+  "description": "RustSim高性能SPICE电路仿真器的详细算法实现原理文档",
+  "author": "RustSim Team",
+  "language": "zh-cn",
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  },
+  "plugins": [
+    "search",
+    "highlight",
+    "sharing",
+    "fontsettings",
+    "theme-default",
+    "mermaid-gb3",
+    "copy-code-button",
+    "expandable-chapters",
+    "back-to-top-button",
+    "github",
+    "github-buttons",
+    "toc"
+  ],
+  "pluginsConfig": {
+    "search": {
+      "maxIndexSize": 100000,
+      "ignoreCase": true
+    },
+    "sharing": {
+      "facebook": true,
+      "twitter": true,
+      "google": false,
+      "weibo": false,
+      "instapaper": false,
+      "vk": false,
+      "all": [
+        "facebook", "google", "twitter", "weibo", "instapaper"
+      ]
+    },
+    "fontsettings": {
+      "theme": "white",
+      "family": "sans",
+      "size": 2
+    },
+    "github": {
+      "url": "https://github.com/ICMHG/RustSim"
+    },
+    "github-buttons": {
+      "repo": "ICMHG/RustSim",
+      "types": [
+        "star",
+        "watch",
+        "fork",
+        "follow"
+      ],
+      "size": "small"
+    },
+    "toc": {
+      "addClass": true,
+      "className": "toc"
+    },
+    "mermaid-gb3": {
+      "theme": "default"
+    }
+  },
+  "variables": {
+    "themeRepo": "https://github.com/GitbookIO/theme-default"
+  }
+} 

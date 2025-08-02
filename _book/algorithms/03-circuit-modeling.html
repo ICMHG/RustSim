@@ -1,0 +1,985 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-cn" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>电路建模 · RustSim 算法实现原理文档</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="RustSim Team">
+        
+        
+    
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-back-to-top-button/plugin.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+    
+        
+        
+        <link rel="stylesheet" href="../gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.default.css" />
+    
+
+        
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="04-mna.html" />
+    
+    
+    <link rel="prev" href="02-parser.html" />
+    
+
+    <style>
+    @media only screen and (max-width: 640px) {
+        .book-header .hidden-mobile {
+            display: none;
+        }
+    }
+    </style>
+    <script>
+        window["gitbook-plugin-github-buttons"] = {"repo":"ICMHG/RustSim","types":["star","watch","fork","follow"],"size":"small"};
+    </script>
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">算法实现原理</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-architecture.html">
+            
+                <a href="01-architecture.html">
+            
+                    
+                    总体架构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="02-parser.html">
+            
+                <a href="02-parser.html">
+            
+                    
+                    解析器算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.3" data-path="03-circuit-modeling.html">
+            
+                <a href="03-circuit-modeling.html">
+            
+                    
+                    电路建模
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="04-mna.html">
+            
+                <a href="04-mna.html">
+            
+                    
+                    MNA算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="05-solver.html">
+            
+                <a href="05-solver.html">
+            
+                    
+                    求解器算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="06-simulation.html">
+            
+                <a href="06-simulation.html">
+            
+                    
+                    仿真算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="07-output.html">
+            
+                <a href="07-output.html">
+            
+                    
+                    输出处理
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">快速开始</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../getting-started/installation.md">
+            
+                <span>
+            
+                    
+                    安装指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../getting-started/basic-usage.md">
+            
+                <span>
+            
+                    
+                    基本使用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../getting-started/examples.md">
+            
+                <span>
+            
+                    
+                    示例电路
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">高级功能</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../advanced/performance.md">
+            
+                <span>
+            
+                    
+                    性能优化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../advanced/extension.md">
+            
+                <span>
+            
+                    
+                    扩展开发
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../advanced/troubleshooting.md">
+            
+                <span>
+            
+                    
+                    故障排除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">参考文档</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../reference/api.md">
+            
+                <span>
+            
+                    
+                    API参考
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../reference/spice-syntax.md">
+            
+                <span>
+            
+                    
+                    SPICE语法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../reference/configuration.md">
+            
+                <span>
+            
+                    
+                    配置选项
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">贡献指南</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../contributing/development.md">
+            
+                <span>
+            
+                    
+                    开发环境
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../contributing/coding-standards.md">
+            
+                <span>
+            
+                    
+                    代码规范
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../contributing/testing.md">
+            
+                <span>
+            
+                    
+                    测试指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="../contributing/commits.md">
+            
+                <span>
+            
+                    
+                    提交规范
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">附录</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../appendix/mathematics.md">
+            
+                <span>
+            
+                    
+                    数学公式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.2" data-path="../appendix/complexity.md">
+            
+                <span>
+            
+                    
+                    算法复杂度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.3" data-path="../appendix/faq.md">
+            
+                <span>
+            
+                    
+                    常见问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.4" data-path="../appendix/changelog.md">
+            
+                <span>
+            
+                    
+                    更新日志
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本書使用 GitBook 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >电路建模</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x7535;&#x8DEF;&#x5EFA;&#x6A21;">&#x7535;&#x8DEF;&#x5EFA;&#x6A21;</h1>
+<h2 id="&#x6982;&#x8FF0;">&#x6982;&#x8FF0;</h2>
+<p>RustSim&#x7684;&#x7535;&#x8DEF;&#x5EFA;&#x6A21;&#x6A21;&#x5757;&#x63D0;&#x4F9B;&#x4E86;&#x5B8C;&#x6574;&#x7684;&#x7535;&#x8DEF;&#x62BD;&#x8C61;&#x8868;&#x793A;&#xFF0C;&#x5305;&#x62EC;&#x8282;&#x70B9;&#x3001;&#x5143;&#x4EF6;&#x3001;&#x62D3;&#x6251;&#x7ED3;&#x6784;&#x7684;&#x7BA1;&#x7406;&#x3002;&#x8BE5;&#x6A21;&#x5757;&#x662F;&#x8FDE;&#x63A5;&#x89E3;&#x6790;&#x5668;&#x548C;&#x4EFF;&#x771F;&#x5668;&#x7684;&#x6865;&#x6881;&#xFF0C;&#x4E3A;&#x540E;&#x7EED;&#x7684;MNA&#x5206;&#x6790;&#x63D0;&#x4F9B;&#x4E86;&#x5FC5;&#x8981;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;</p>
+<h2 id="&#x7535;&#x8DEF;&#x62BD;&#x8C61;&#x8868;&#x793A;&#x539F;&#x7406;">&#x7535;&#x8DEF;&#x62BD;&#x8C61;&#x8868;&#x793A;&#x539F;&#x7406;</h2>
+<h3 id="&#x57FA;&#x672C;&#x6982;&#x5FF5;">&#x57FA;&#x672C;&#x6982;&#x5FF5;</h3>
+<p>&#x7535;&#x8DEF;&#x5EFA;&#x6A21;&#x57FA;&#x4E8E;&#x4EE5;&#x4E0B;&#x6838;&#x5FC3;&#x6982;&#x5FF5;&#xFF1A;</p>
+<ul>
+<li><strong>&#x8282;&#x70B9;&#xFF08;Node&#xFF09;</strong>&#xFF1A;&#x7535;&#x8DEF;&#x4E2D;&#x7684;&#x8FDE;&#x63A5;&#x70B9;&#xFF0C;&#x5177;&#x6709;&#x7535;&#x538B;&#x5C5E;&#x6027;</li>
+<li><strong>&#x5143;&#x4EF6;&#xFF08;Component&#xFF09;</strong>&#xFF1A;&#x7535;&#x8DEF;&#x4E2D;&#x7684;&#x529F;&#x80FD;&#x5355;&#x5143;&#xFF0C;&#x8FDE;&#x63A5;&#x8282;&#x70B9;</li>
+<li><strong>&#x62D3;&#x6251;&#x7ED3;&#x6784;</strong>&#xFF1A;&#x8282;&#x70B9;&#x548C;&#x5143;&#x4EF6;&#x4E4B;&#x95F4;&#x7684;&#x8FDE;&#x63A5;&#x5173;&#x7CFB;</li>
+<li><strong>&#x63A5;&#x5730;&#x8282;&#x70B9;</strong>&#xFF1A;&#x53C2;&#x8003;&#x7535;&#x4F4D;&#x70B9;&#xFF0C;&#x901A;&#x5E38;&#x6807;&#x8BB0;&#x4E3A;&quot;0&quot;&#x6216;&quot;gnd&quot;</li>
+</ul>
+<h3 id="&#x6570;&#x636E;&#x7ED3;&#x6784;&#x8BBE;&#x8BA1;">&#x6570;&#x636E;&#x7ED3;&#x6784;&#x8BBE;&#x8BA1;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Circuit</span></span> {
+    <span class="hljs-keyword">pub</span> title: <span class="hljs-built_in">String</span>,
+    <span class="hljs-keyword">pub</span> nodes: <span class="hljs-built_in">Vec</span>&lt;Node&gt;,
+    <span class="hljs-keyword">pub</span> components: <span class="hljs-built_in">Vec</span>&lt;Component&gt;,
+    <span class="hljs-keyword">pub</span> node_map: HashMap&lt;<span class="hljs-built_in">String</span>, <span class="hljs-keyword">usize</span>&gt;,
+    <span class="hljs-keyword">pub</span> ground_node: <span class="hljs-built_in">Option</span>&lt;<span class="hljs-keyword">usize</span>&gt;,
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Node</span></span> {
+    <span class="hljs-keyword">pub</span> name: <span class="hljs-built_in">String</span>,
+    <span class="hljs-keyword">pub</span> id: <span class="hljs-keyword">usize</span>,
+    <span class="hljs-keyword">pub</span> voltage: <span class="hljs-keyword">f64</span>,
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Component</span></span> {
+    <span class="hljs-keyword">pub</span> name: <span class="hljs-built_in">String</span>,
+    <span class="hljs-keyword">pub</span> component_type: ComponentType,
+    <span class="hljs-keyword">pub</span> nodes: <span class="hljs-built_in">Vec</span>&lt;<span class="hljs-built_in">String</span>&gt;,
+    <span class="hljs-keyword">pub</span> value: <span class="hljs-keyword">f64</span>,
+    <span class="hljs-keyword">pub</span> model: <span class="hljs-built_in">Option</span>&lt;<span class="hljs-built_in">String</span>&gt;,
+}
+</code></pre>
+<h2 id="&#x5143;&#x4EF6;&#x5EFA;&#x6A21;&#x548C;&#x5206;&#x7C7B;&#x7B97;&#x6CD5;">&#x5143;&#x4EF6;&#x5EFA;&#x6A21;&#x548C;&#x5206;&#x7C7B;&#x7B97;&#x6CD5;</h2>
+<h3 id="&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;">&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;</h3>
+<p>RustSim&#x652F;&#x6301;&#x591A;&#x79CD;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#xFF0C;&#x6BCF;&#x79CD;&#x7C7B;&#x578B;&#x90FD;&#x6709;&#x7279;&#x5B9A;&#x7684;&#x7279;&#x6027;&#x548C;&#x884C;&#x4E3A;&#xFF1A;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">ComponentType</span></span> {
+    Resistor,           <span class="hljs-comment">// &#x7535;&#x963B;</span>
+    Capacitor,          <span class="hljs-comment">// &#x7535;&#x5BB9;</span>
+    Inductor,           <span class="hljs-comment">// &#x7535;&#x611F;</span>
+    VoltageSource,      <span class="hljs-comment">// &#x7535;&#x538B;&#x6E90;</span>
+    CurrentSource,      <span class="hljs-comment">// &#x7535;&#x6D41;&#x6E90;</span>
+    Diode,              <span class="hljs-comment">// &#x4E8C;&#x6781;&#x7BA1;</span>
+    Mosfet {            <span class="hljs-comment">// MOSFET</span>
+        model_type: <span class="hljs-built_in">String</span>,
+        width: <span class="hljs-built_in">Option</span>&lt;<span class="hljs-keyword">f64</span>&gt;,
+        length: <span class="hljs-built_in">Option</span>&lt;<span class="hljs-keyword">f64</span>&gt;,
+    },
+    Bjt {               <span class="hljs-comment">// BJT</span>
+        model_type: <span class="hljs-built_in">String</span>,
+        area: <span class="hljs-built_in">Option</span>&lt;<span class="hljs-keyword">f64</span>&gt;,
+    },
+}
+</code></pre>
+<h3 id="&#x5143;&#x4EF6;&#x5206;&#x7C7B;&#x7B97;&#x6CD5;">&#x5143;&#x4EF6;&#x5206;&#x7C7B;&#x7B97;&#x6CD5;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> ComponentType {
+    <span class="hljs-comment">/// &#x5224;&#x65AD;&#x662F;&#x5426;&#x4E3A;&#x7EBF;&#x6027;&#x5143;&#x4EF6;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">is_linear</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-keyword">bool</span> {
+        matches!(<span class="hljs-keyword">self</span>, 
+            ComponentType::Resistor | 
+            ComponentType::Capacitor | 
+            ComponentType::Inductor | 
+            ComponentType::VoltageSource | 
+            ComponentType::CurrentSource
+        )
+    }
+
+    <span class="hljs-comment">/// &#x5224;&#x65AD;&#x662F;&#x5426;&#x4E3A;&#x7535;&#x6E90;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">is_source</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-keyword">bool</span> {
+        matches!(<span class="hljs-keyword">self</span>, ComponentType::VoltageSource | ComponentType::CurrentSource)
+    }
+
+    <span class="hljs-comment">/// &#x5224;&#x65AD;&#x662F;&#x5426;&#x9700;&#x8981;&#x7535;&#x6D41;&#x8DDF;&#x8E2A;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">tracks_current</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-keyword">bool</span> {
+        matches!(<span class="hljs-keyword">self</span>, ComponentType::VoltageSource | ComponentType::Inductor)
+    }
+}
+</code></pre>
+<h3 id="&#x5143;&#x4EF6;&#x521B;&#x5EFA;&#x7B97;&#x6CD5;">&#x5143;&#x4EF6;&#x521B;&#x5EFA;&#x7B97;&#x6CD5;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> Component {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new_resistor</span></span>(name: <span class="hljs-built_in">String</span>, node1: <span class="hljs-built_in">String</span>, node2: <span class="hljs-built_in">String</span>, resistance: <span class="hljs-keyword">f64</span>) -&gt; <span class="hljs-keyword">Self</span> {
+        Component {
+            name,
+            component_type: ComponentType::Resistor,
+            nodes: <span class="hljs-built_in">vec!</span>[node1, node2],
+            value: resistance,
+            model: <span class="hljs-literal">None</span>,
+        }
+    }
+
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new_capacitor</span></span>(name: <span class="hljs-built_in">String</span>, node1: <span class="hljs-built_in">String</span>, node2: <span class="hljs-built_in">String</span>, capacitance: <span class="hljs-keyword">f64</span>) -&gt; <span class="hljs-keyword">Self</span> {
+        Component {
+            name,
+            component_type: ComponentType::Capacitor,
+            nodes: <span class="hljs-built_in">vec!</span>[node1, node2],
+            value: capacitance,
+            model: <span class="hljs-literal">None</span>,
+        }
+    }
+
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new_voltage_source</span></span>(name: <span class="hljs-built_in">String</span>, node_pos: <span class="hljs-built_in">String</span>, node_neg: <span class="hljs-built_in">String</span>, voltage: <span class="hljs-keyword">f64</span>) -&gt; <span class="hljs-keyword">Self</span> {
+        Component {
+            name,
+            component_type: ComponentType::VoltageSource,
+            nodes: <span class="hljs-built_in">vec!</span>[node_pos, node_neg],
+            value: voltage,
+            model: <span class="hljs-literal">None</span>,
+        }
+    }
+}
+</code></pre>
+<h2 id="&#x62D3;&#x6251;&#x7ED3;&#x6784;&#x7BA1;&#x7406;">&#x62D3;&#x6251;&#x7ED3;&#x6784;&#x7BA1;&#x7406;</h2>
+<h3 id="&#x8282;&#x70B9;&#x7BA1;&#x7406;&#x7B97;&#x6CD5;">&#x8282;&#x70B9;&#x7BA1;&#x7406;&#x7B97;&#x6CD5;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> Circuit {
+    <span class="hljs-comment">/// &#x6DFB;&#x52A0;&#x8282;&#x70B9;&#x5230;&#x7535;&#x8DEF;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">add_node</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, name: <span class="hljs-built_in">String</span>) -&gt; <span class="hljs-keyword">usize</span> {
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x8282;&#x70B9;&#x662F;&#x5426;&#x5DF2;&#x5B58;&#x5728;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-literal">Some</span>(&amp;id) = <span class="hljs-keyword">self</span>.node_map.get(&amp;name) {
+            <span class="hljs-keyword">return</span> id;
+        }
+
+        <span class="hljs-keyword">let</span> id = <span class="hljs-keyword">self</span>.nodes.len();
+        <span class="hljs-keyword">let</span> node = Node::with_id(name.clone(), id);
+        <span class="hljs-keyword">self</span>.nodes.push(node);
+        <span class="hljs-keyword">self</span>.node_map.insert(name, id);
+
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x662F;&#x5426;&#x4E3A;&#x63A5;&#x5730;&#x8282;&#x70B9;</span>
+        <span class="hljs-keyword">if</span> name == <span class="hljs-string">&quot;0&quot;</span> || name.to_lowercase() == <span class="hljs-string">&quot;gnd&quot;</span> || name.to_lowercase() == <span class="hljs-string">&quot;ground&quot;</span> {
+            <span class="hljs-keyword">self</span>.ground_node = <span class="hljs-literal">Some</span>(id);
+        }
+
+        id
+    }
+
+    <span class="hljs-comment">/// &#x83B7;&#x53D6;&#x8282;&#x70B9;ID</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">get_node_id</span></span>(&amp;<span class="hljs-keyword">self</span>, name: &amp;<span class="hljs-keyword">str</span>) -&gt; <span class="hljs-built_in">Option</span>&lt;<span class="hljs-keyword">usize</span>&gt; {
+        <span class="hljs-keyword">self</span>.node_map.get(name).copied()
+    }
+
+    <span class="hljs-comment">/// &#x83B7;&#x53D6;&#x975E;&#x63A5;&#x5730;&#x8282;&#x70B9;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">non_ground_nodes</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Vec</span>&lt;<span class="hljs-keyword">usize</span>&gt; {
+        <span class="hljs-keyword">self</span>.nodes.iter()
+            .filter(|node| <span class="hljs-literal">Some</span>(node.id) != <span class="hljs-keyword">self</span>.ground_node)
+            .map(|node| node.id)
+            .collect()
+    }
+}
+</code></pre>
+<h3 id="&#x5143;&#x4EF6;&#x7BA1;&#x7406;&#x7B97;&#x6CD5;">&#x5143;&#x4EF6;&#x7BA1;&#x7406;&#x7B97;&#x6CD5;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> Circuit {
+    <span class="hljs-comment">/// &#x6DFB;&#x52A0;&#x5143;&#x4EF6;&#x5230;&#x7535;&#x8DEF;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">add_component</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, component: Component) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-comment">// &#x9A8C;&#x8BC1;&#x5143;&#x4EF6;</span>
+        component.validate()?;
+
+        <span class="hljs-comment">// &#x786E;&#x4FDD;&#x6240;&#x6709;&#x8282;&#x70B9;&#x90FD;&#x5B58;&#x5728;</span>
+        <span class="hljs-keyword">for</span> node_name <span class="hljs-keyword">in</span> &amp;component.nodes {
+            <span class="hljs-keyword">if</span> !<span class="hljs-keyword">self</span>.node_map.contains_key(node_name) {
+                <span class="hljs-keyword">self</span>.add_node(node_name.clone());
+            }
+        }
+
+        <span class="hljs-keyword">self</span>.components.push(component);
+        <span class="hljs-literal">Ok</span>(())
+    }
+
+    <span class="hljs-comment">/// &#x6309;&#x7C7B;&#x578B;&#x83B7;&#x53D6;&#x5143;&#x4EF6;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">components_of_type</span></span>(&amp;<span class="hljs-keyword">self</span>, component_type: &amp;ComponentType) -&gt; <span class="hljs-built_in">Vec</span>&lt;&amp;Component&gt; {
+        <span class="hljs-keyword">self</span>.components.iter()
+            .filter(|comp| std::mem::discriminant(&amp;comp.component_type) == 
+                           std::mem::discriminant(component_type))
+            .collect()
+    }
+
+    <span class="hljs-comment">/// &#x83B7;&#x53D6;&#x7535;&#x538B;&#x6E90;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">voltage_sources</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Vec</span>&lt;&amp;Component&gt; {
+        <span class="hljs-keyword">self</span>.components.iter()
+            .filter(|comp| matches!(comp.component_type, ComponentType::VoltageSource))
+            .collect()
+    }
+
+    <span class="hljs-comment">/// &#x83B7;&#x53D6;&#x7535;&#x6D41;&#x6E90;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">current_sources</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Vec</span>&lt;&amp;Component&gt; {
+        <span class="hljs-keyword">self</span>.components.iter()
+            .filter(|comp| matches!(comp.component_type, ComponentType::CurrentSource))
+            .collect()
+    }
+
+    <span class="hljs-comment">/// &#x83B7;&#x53D6;&#x7EBF;&#x6027;&#x5143;&#x4EF6;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">linear_components</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Vec</span>&lt;&amp;Component&gt; {
+        <span class="hljs-keyword">self</span>.components.iter()
+            .filter(|comp| comp.component_type.is_linear())
+            .collect()
+    }
+}
+</code></pre>
+<h2 id="&#x7535;&#x8DEF;&#x9A8C;&#x8BC1;&#x548C;&#x5B8C;&#x6574;&#x6027;&#x68C0;&#x67E5;">&#x7535;&#x8DEF;&#x9A8C;&#x8BC1;&#x548C;&#x5B8C;&#x6574;&#x6027;&#x68C0;&#x67E5;</h2>
+<h3 id="&#x9A8C;&#x8BC1;&#x7B97;&#x6CD5;">&#x9A8C;&#x8BC1;&#x7B97;&#x6CD5;</h3>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> Component {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">validate</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x8282;&#x70B9;&#x6570;&#x91CF;</span>
+        <span class="hljs-keyword">match</span> <span class="hljs-keyword">self</span>.component_type {
+            ComponentType::Resistor | 
+            ComponentType::Capacitor | 
+            ComponentType::Inductor |
+            ComponentType::VoltageSource |
+            ComponentType::CurrentSource =&gt; {
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.nodes.len() != <span class="hljs-number">2</span> {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Component {} must have exactly 2 nodes&quot;</span>, <span class="hljs-keyword">self</span>.name));
+                }
+            }
+            ComponentType::Diode =&gt; {
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.nodes.len() != <span class="hljs-number">2</span> {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Diode {} must have exactly 2 nodes&quot;</span>, <span class="hljs-keyword">self</span>.name));
+                }
+            }
+            _ =&gt; {
+                <span class="hljs-comment">// &#x5176;&#x4ED6;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x7684;&#x9A8C;&#x8BC1;</span>
+            }
+        }
+
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x53C2;&#x6570;&#x503C;</span>
+        <span class="hljs-keyword">match</span> <span class="hljs-keyword">self</span>.component_type {
+            ComponentType::Resistor =&gt; {
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.value &lt;= <span class="hljs-number">0.0</span> {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Resistor {} must have positive resistance&quot;</span>, <span class="hljs-keyword">self</span>.name));
+                }
+            }
+            ComponentType::Capacitor =&gt; {
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.value &lt; <span class="hljs-number">0.0</span> {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Capacitor {} must have non-negative capacitance&quot;</span>, <span class="hljs-keyword">self</span>.name));
+                }
+            }
+            ComponentType::Inductor =&gt; {
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.value &lt; <span class="hljs-number">0.0</span> {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Inductor {} must have non-negative inductance&quot;</span>, <span class="hljs-keyword">self</span>.name));
+                }
+            }
+            _ =&gt; {}
+        }
+
+        <span class="hljs-literal">Ok</span>(())
+    }
+}
+
+<span class="hljs-keyword">impl</span> Circuit {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">validate</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x662F;&#x5426;&#x6709;&#x63A5;&#x5730;&#x8282;&#x70B9;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.ground_node.is_none() {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Circuit must have a ground node (named &apos;0&apos;, &apos;gnd&apos;, or &apos;ground&apos;)&quot;</span>));
+        }
+
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x662F;&#x5426;&#x6709;&#x5143;&#x4EF6;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.components.is_empty() {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Circuit must have at least one component&quot;</span>));
+        }
+
+        <span class="hljs-comment">// &#x9A8C;&#x8BC1;&#x6240;&#x6709;&#x5143;&#x4EF6;</span>
+        <span class="hljs-keyword">for</span> component <span class="hljs-keyword">in</span> &amp;<span class="hljs-keyword">self</span>.components {
+            component.validate()?;
+        }
+
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x7535;&#x8DEF;&#x8FDE;&#x901A;&#x6027;</span>
+        <span class="hljs-keyword">self</span>.check_connectivity()?;
+
+        <span class="hljs-literal">Ok</span>(())
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">check_connectivity</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-comment">// &#x6784;&#x5EFA;&#x90BB;&#x63A5;&#x8868;</span>
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> adjacency = <span class="hljs-built_in">vec!</span>[<span class="hljs-built_in">Vec</span>::new(); <span class="hljs-keyword">self</span>.nodes.len()];
+
+        <span class="hljs-keyword">for</span> component <span class="hljs-keyword">in</span> &amp;<span class="hljs-keyword">self</span>.components {
+            <span class="hljs-keyword">if</span> component.nodes.len() &gt;= <span class="hljs-number">2</span> {
+                <span class="hljs-keyword">let</span> node1 = <span class="hljs-keyword">self</span>.get_node_id(&amp;component.nodes[<span class="hljs-number">0</span>]);
+                <span class="hljs-keyword">let</span> node2 = <span class="hljs-keyword">self</span>.get_node_id(&amp;component.nodes[<span class="hljs-number">1</span>]);
+
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> (<span class="hljs-literal">Some</span>(id1), <span class="hljs-literal">Some</span>(id2)) = (node1, node2) {
+                    adjacency[id1].push(id2);
+                    adjacency[id2].push(id1);
+                }
+            }
+        }
+
+        <span class="hljs-comment">// &#x68C0;&#x67E5;&#x4ECE;&#x63A5;&#x5730;&#x8282;&#x70B9;&#x53EF;&#x8FBE;&#x6240;&#x6709;&#x8282;&#x70B9;</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-literal">Some</span>(ground_id) = <span class="hljs-keyword">self</span>.ground_node {
+            <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> visited = <span class="hljs-built_in">vec!</span>[<span class="hljs-literal">false</span>; <span class="hljs-keyword">self</span>.nodes.len()];
+            <span class="hljs-keyword">self</span>.dfs(ground_id, &amp;adjacency, &amp;<span class="hljs-keyword">mut</span> visited);
+
+            <span class="hljs-keyword">for</span> (i, &amp;visited) <span class="hljs-keyword">in</span> visited.iter().enumerate() {
+                <span class="hljs-keyword">if</span> !visited {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(anyhow!(<span class="hljs-string">&quot;Node {} is not connected to ground&quot;</span>, <span class="hljs-keyword">self</span>.nodes[i].name));
+                }
+            }
+        }
+
+        <span class="hljs-literal">Ok</span>(())
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">dfs</span></span>(&amp;<span class="hljs-keyword">self</span>, node: <span class="hljs-keyword">usize</span>, adjacency: &amp;[<span class="hljs-built_in">Vec</span>&lt;<span class="hljs-keyword">usize</span>&gt;], visited: &amp;<span class="hljs-keyword">mut</span> [<span class="hljs-keyword">bool</span>]) {
+        visited[node] = <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">for</span> &amp;neighbor <span class="hljs-keyword">in</span> &amp;adjacency[node] {
+            <span class="hljs-keyword">if</span> !visited[neighbor] {
+                <span class="hljs-keyword">self</span>.dfs(neighbor, adjacency, visited);
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="&#x6027;&#x80FD;&#x4F18;&#x5316;">&#x6027;&#x80FD;&#x4F18;&#x5316;</h2>
+<h3 id="1-&#x7D22;&#x5F15;&#x4F18;&#x5316;">1. &#x7D22;&#x5F15;&#x4F18;&#x5316;</h3>
+<ul>
+<li>&#x4F7F;&#x7528;HashMap&#x8FDB;&#x884C;&#x8282;&#x70B9;&#x540D;&#x79F0;&#x5230;ID&#x7684;&#x5FEB;&#x901F;&#x6620;&#x5C04;</li>
+<li>&#x6309;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x9884;&#x5206;&#x7C7B;&#xFF0C;&#x51CF;&#x5C11;&#x8FD0;&#x884C;&#x65F6;&#x8FC7;&#x6EE4;&#x5F00;&#x9500;</li>
+</ul>
+<h3 id="2-&#x5185;&#x5B58;&#x4F18;&#x5316;">2. &#x5185;&#x5B58;&#x4F18;&#x5316;</h3>
+<ul>
+<li>&#x5B57;&#x7B26;&#x4E32;&#x590D;&#x7528;&#xFF0C;&#x51CF;&#x5C11;&#x91CD;&#x590D;&#x5B58;&#x50A8;</li>
+<li>&#x667A;&#x80FD;&#x6307;&#x9488;&#x7BA1;&#x7406;&#x5927;&#x578B;&#x6570;&#x636E;&#x7ED3;&#x6784;</li>
+</ul>
+<h3 id="3-&#x7B97;&#x6CD5;&#x4F18;&#x5316;">3. &#x7B97;&#x6CD5;&#x4F18;&#x5316;</h3>
+<ul>
+<li>&#x9AD8;&#x6548;&#x7684;&#x8FDE;&#x901A;&#x6027;&#x68C0;&#x67E5;&#x7B97;&#x6CD5;</li>
+<li>&#x589E;&#x91CF;&#x5F0F;&#x7535;&#x8DEF;&#x66F4;&#x65B0;</li>
+</ul>
+<h2 id="&#x6269;&#x5C55;&#x6027;&#x8BBE;&#x8BA1;">&#x6269;&#x5C55;&#x6027;&#x8BBE;&#x8BA1;</h2>
+<h3 id="1-&#x65B0;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x652F;&#x6301;">1. &#x65B0;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x652F;&#x6301;</h3>
+<p>&#x901A;&#x8FC7;&#x6269;&#x5C55;ComponentType&#x679A;&#x4E3E;&#x548C;&#x76F8;&#x5E94;&#x7684;&#x9A8C;&#x8BC1;&#x903B;&#x8F91;&#xFF0C;&#x53EF;&#x4EE5;&#x8F7B;&#x677E;&#x6DFB;&#x52A0;&#x65B0;&#x7684;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x3002;</p>
+<h3 id="2-&#x591A;&#x7AEF;&#x53E3;&#x5143;&#x4EF6;&#x652F;&#x6301;">2. &#x591A;&#x7AEF;&#x53E3;&#x5143;&#x4EF6;&#x652F;&#x6301;</h3>
+<p>&#x5F53;&#x524D;&#x8BBE;&#x8BA1;&#x4E3B;&#x8981;&#x652F;&#x6301;&#x4E8C;&#x7AEF;&#x53E3;&#x5143;&#x4EF6;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x6269;&#x5C55;nodes&#x5B57;&#x6BB5;&#x652F;&#x6301;&#x591A;&#x7AEF;&#x53E3;&#x5143;&#x4EF6;&#x3002;</p>
+<h3 id="3-&#x53C2;&#x6570;&#x5316;&#x6A21;&#x578B;&#x652F;&#x6301;">3. &#x53C2;&#x6570;&#x5316;&#x6A21;&#x578B;&#x652F;&#x6301;</h3>
+<p>&#x901A;&#x8FC7;&#x6269;&#x5C55;model&#x5B57;&#x6BB5;&#xFF0C;&#x53EF;&#x4EE5;&#x652F;&#x6301;&#x590D;&#x6742;&#x7684;&#x53C2;&#x6570;&#x5316;&#x5143;&#x4EF6;&#x6A21;&#x578B;&#x3002;</p>
+<h2 id="&#x6D4B;&#x8BD5;&#x548C;&#x9A8C;&#x8BC1;">&#x6D4B;&#x8BD5;&#x548C;&#x9A8C;&#x8BC1;</h2>
+<h3 id="1-&#x5355;&#x5143;&#x6D4B;&#x8BD5;">1. &#x5355;&#x5143;&#x6D4B;&#x8BD5;</h3>
+<p>&#x6BCF;&#x4E2A;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x548C;&#x7535;&#x8DEF;&#x64CD;&#x4F5C;&#x90FD;&#x6709;&#x5BF9;&#x5E94;&#x7684;&#x5355;&#x5143;&#x6D4B;&#x8BD5;&#x3002;</p>
+<h3 id="2-&#x96C6;&#x6210;&#x6D4B;&#x8BD5;">2. &#x96C6;&#x6210;&#x6D4B;&#x8BD5;</h3>
+<p>&#x5B8C;&#x6574;&#x7684;&#x7535;&#x8DEF;&#x6784;&#x5EFA;&#x548C;&#x9A8C;&#x8BC1;&#x6D4B;&#x8BD5;&#x3002;</p>
+<h3 id="3-&#x6027;&#x80FD;&#x6D4B;&#x8BD5;">3. &#x6027;&#x80FD;&#x6D4B;&#x8BD5;</h3>
+<p>&#x5927;&#x89C4;&#x6A21;&#x7535;&#x8DEF;&#x7684;&#x6784;&#x5EFA;&#x548C;&#x9A8C;&#x8BC1;&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x3002;</p>
+<h2 id="&#x603B;&#x7ED3;">&#x603B;&#x7ED3;</h2>
+<p>RustSim&#x7684;&#x7535;&#x8DEF;&#x5EFA;&#x6A21;&#x6A21;&#x5757;&#x63D0;&#x4F9B;&#x4E86;&#x5B8C;&#x6574;&#x3001;&#x9AD8;&#x6548;&#x7684;&#x7535;&#x8DEF;&#x62BD;&#x8C61;&#x8868;&#x793A;&#x3002;&#x901A;&#x8FC7;&#x6E05;&#x6670;&#x7684;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;&#x3001;&#x5B8C;&#x5584;&#x7684;&#x9A8C;&#x8BC1;&#x7B97;&#x6CD5;&#x548C;&#x4F18;&#x5316;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x4E3A;&#x540E;&#x7EED;&#x7684;MNA&#x5206;&#x6790;&#x63D0;&#x4F9B;&#x4E86;&#x575A;&#x5B9E;&#x7684;&#x57FA;&#x7840;&#x3002;&#x6A21;&#x5757;&#x5316;&#x8BBE;&#x8BA1;&#x786E;&#x4FDD;&#x4E86;&#x826F;&#x597D;&#x7684;&#x6269;&#x5C55;&#x6027;&#xFF0C;&#x53EF;&#x4EE5;&#x8F7B;&#x677E;&#x652F;&#x6301;&#x65B0;&#x7684;&#x5143;&#x4EF6;&#x7C7B;&#x578B;&#x548C;&#x5206;&#x6790;&#x9700;&#x6C42;&#x3002;</p>
+<script type="text/javascript">var targetUl = document.getElementsByClassName('page-inner')[0].getElementsByTagName('ul')[0];if(targetUl.getElementsByTagName('a').length>0){targetUl.className='toc';}</script>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="02-parser.html" class="navigation navigation-prev " aria-label="Previous page: 解析器算法">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="04-mna.html" class="navigation navigation-next " aria-label="Next page: MNA算法">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"电路建模","level":"2.3","depth":1,"next":{"title":"MNA算法","level":"2.4","depth":1,"path":"algorithms/04-mna.md","ref":"algorithms/04-mna.md","articles":[]},"previous":{"title":"解析器算法","level":"2.2","depth":1,"path":"algorithms/02-parser.md","ref":"algorithms/02-parser.md","articles":[]},"dir":"ltr"},"config":{"plugins":["search","highlight","sharing","fontsettings","theme-default","mermaid-gb3","copy-code-button","expandable-chapters","back-to-top-button","github","github-buttons","toc"],"styles":{"ebook":"styles/ebook.css","epub":"styles/epub.css","mobi":"styles/mobi.css","pdf":"styles/pdf.css","print":"styles/print.css","website":"styles/website.css"},"pluginsConfig":{"github":{"url":"https://github.com/ICMHG/RustSim"},"toc":{"addClass":true,"className":"toc"},"search":{"maxIndexSize":100000,"ignoreCase":true},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"family":"sans","size":2,"theme":"white"},"highlight":{},"mermaid-gb3":{"theme":"default"},"back-to-top-button":{},"github-buttons":{"repo":"ICMHG/RustSim","types":["star","watch","fork","follow"],"size":"small"},"copy-code-button":{},"sharing":{"all":["facebook","google","twitter","weibo","instapaper"],"facebook":true,"google":false,"instapaper":false,"twitter":true,"vk":false,"weibo":false},"theme-default":{"showLevel":false,"styles":{"ebook":"styles/ebook.css","epub":"styles/epub.css","mobi":"styles/mobi.css","pdf":"styles/pdf.css","print":"styles/print.css","website":"styles/website.css"}},"expandable-chapters":{}},"theme":"default","author":"RustSim Team","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"themeRepo":"https://github.com/GitbookIO/theme-default"},"title":"RustSim 算法实现原理文档","language":"zh-cn","gitbook":"*","description":"RustSim高性能SPICE电路仿真器的详细算法实现原理文档"},"file":{"path":"algorithms/03-circuit-modeling.md","mtime":"2025-08-02T11:53:27.992Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2025-08-02T12:57:36.992Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-mermaid-gb3/book/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-back-to-top-button/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-github-buttons/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    <script src="../gitbook/gitbook-plugin-mermaid-gb3/mermaid/mermaid.min.js"></script>
+
+    </body>
+</html>
+
